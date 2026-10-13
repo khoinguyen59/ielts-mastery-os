@@ -1,0 +1,36 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <title>Cà Bi — chăm học</title>
+  <g transform="translate(256,266) scale(2.1)">
+    <g id="ears">
+      <circle cx="-24" cy="-46" r="11" fill="#C08A54" stroke="#4A2E1A" stroke-width="3"/>
+      <circle cx="24" cy="-46" r="11" fill="#C08A54" stroke="#4A2E1A" stroke-width="3"/>
+      <circle cx="-22" cy="-45" r="5" fill="#9C6B44"/>
+      <circle cx="22" cy="-45" r="5" fill="#9C6B44"/>
+    </g>
+    <g id="head">
+      <path d="M0 -50 Q22 -48 32 -34 Q42 -20 48 2 Q53 46 18 46 L-18 46 Q-53 46 -48 2 Q-42 -20 -32 -34 Q-22 -48 0 -50 Z" fill="#C08A54" stroke="#4A2E1A" stroke-width="3"/>
+    </g>
+    <g id="muzzle">
+      <ellipse cx="0" cy="15" rx="25" ry="22" fill="#9C6B44"/>
+      <path id="nose" d="M-5 2 Q0 6 5 2" fill="none" stroke="#3F2A1D" stroke-width="2.6" stroke-linecap="round"/>
+      <path id="mouth" d="M0 6 L0 15 M0 15 Q-4 22 -11 17 M0 15 Q4 22 11 17" fill="none" stroke="#3F2A1D" stroke-width="2.6" stroke-linecap="round"/>
+    </g>
+    <g id="eyes">
+      <ellipse cx="-21" cy="-11" rx="2.8" ry="3.8" fill="#3F2A1D"/>
+      <ellipse cx="21" cy="-11" rx="2.8" ry="3.8" fill="#3F2A1D"/>
+    </g>
+    <g id="glasses" transform="rotate(-6)">
+      <circle cx="-22" cy="-14" r="10" fill="none" stroke="#182033" stroke-width="2.2"/>
+      <circle cx="22" cy="-14" r="10" fill="none" stroke="#182033" stroke-width="2.2"/>
+      <path d="M-12 -14 L12 -14" fill="none" stroke="#182033" stroke-width="2.2"/>
+    </g>
+    <g id="scarf">
+      <path d="M-40 30 Q0 44 40 30 L40 40 Q0 54 -40 40 Z" fill="#008F80"/>
+      <rect x="16" y="38" width="14" height="22" rx="5" fill="#006F63"/>
+    </g>
+    <g id="book">
+      <path d="M-30 38 L0 30 L30 38 L30 56 L0 48 L-30 56 Z" fill="#E3F7F3" stroke="#008F80" stroke-width="2"/>
+      <path d="M0 30 L0 48" stroke="#008F80" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

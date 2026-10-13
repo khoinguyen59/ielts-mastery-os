@@ -1,0 +1,12 @@
+# IELTS Mastery OS Application Dependencies
+# Target: IELTS 7.0+ & Fullstack AI Application
+
+# Core Testing & Quality
+pytest>=8.0.0
+flake8>=7.0.0
+
+# Document & PDF Processing (Optional tools for local inspection)
+pymupdf>=1.24.0
+
+# Graphify AST Knowledge Graph
+networkx>=3.0

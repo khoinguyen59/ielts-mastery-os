@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="flameOuter" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="40%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="flameMid" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="flameInner" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="60%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <filter id="flameShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7f1d1d" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- 3D Base Shadow / Depth Rim -->
+  <path d="M32 4 C35 12 40 18 47 23 C53 27 57 34 57 43 C57 55 46 62 32 62 C18 62 7 55 7 43 C7 33 12 25 18 19 C19 25 22 29 25 31 C25 21 28 11 32 4 Z"
+        fill="#7f1d1d" opacity="0.75" transform="translate(0, 2)"/>
+
+  <!-- Outer Flame Body with 3D Emboss -->
+  <path d="M32 4 C35 12 40 18 47 23 C53 27 57 34 57 43 C57 55 46 61 32 61 C18 61 7 55 7 43 C7 33 12 25 18 19 C19 25 22 29 25 31 C25 21 28 11 32 4 Z"
+        fill="url(#flameOuter)" filter="url(#flameShadow)"/>
+
+  <!-- Mid Flame Tongue -->
+  <path d="M32 18 C35 24 40 29 44 33 C48 37 49 42 49 47 C49 55 42 58 32 58 C22 58 15 55 15 47 C15 39 19 33 24 28 C25 32 27 35 29 36 C29 28 30 22 32 18 Z"
+        fill="url(#flameMid)"/>
+
+  <!-- Inner Hot White-Yellow Core -->
+  <path d="M32 30 C34 35 38 39 40 43 C41 46 41 49 41 52 C41 56 37 57 32 57 C27 57 23 56 23 52 C23 47 25 43 28 39 C29 41 30 43 31 44 C31 38 32 34 32 30 Z"
+        fill="url(#flameInner)"/>
+
+  <!-- 3D Specular Glass Highlight -->
+  <path d="M19 23 C14 28 11 35 11 43 C11 48 13 52 17 55 C14 51 13 46 13 42 C13 35 16 29 20 24 Z"
+        fill="#ffffff" opacity="0.45"/>
+</svg>

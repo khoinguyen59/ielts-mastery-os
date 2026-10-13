@@ -1,0 +1,245 @@
+{
+  "id": "t2_p1",
+  "test_number": 2,
+  "passage_number": 1,
+  "title": "Do Animals Dream?",
+  "subtitle": "Investigating rapid eye movement sleep, animal neurological architecture, and evidence of dream states across mammals and octopuses.",
+  "paragraphs": [
+    {
+      "label": "[1]",
+      "text": "Studies using electrodes attached to the heads of sleepers have shown that when we sleep, we do so in two ways that alternate throughout the night. The first is rapid eye movement (REM) or active sleep. During this stage our eyes move, even though our eyelids are closed. Our muscles also twitch slightly, though they are largely paralysed so we don't hurt ourselves. In contrast, we also engage in non-REM sleep, during which we barely move at all. Most dream states, and certainly those with the most vivid dreams, happen during REM sleep."
+    },
+    {
+      "label": "[2]",
+      "text": "There's some evidence that other mammals may also dream. For example, researchers compared the brain patterns of rats running through a maze when awake with their brain patterns during REM sleep. They found the patterns were very similar and concluded that the sleeping rats were dreaming about going through the maze."
+    },
+    {
+      "label": "[3]",
+      "text": "But finding evidence of dreaming in non-mammals has proved more difficult. Their brains are very different from those of humans, and it can often be difficult to record their activity while they are sleeping. Recently, however, researchers succeeded in recording brain activity in sleeping pigeons. As in mammals, the recordings revealed both REM and non-REM sleep. Intriguingly, REM sleep activity was high in brain regions involved in processing visual information, especially images related to physical activities such as flying, which suggests that this may possibly be what the pigeons were dreaming about."
+    },
+    {
+      "label": "[4]",
+      "text": "That said, dreaming and REM sleep are unlikely to be universal in the animal kingdom. For example, sponges don't have brains, so they lack the machinery for dreaming. There are also some animals with unusual sleep patterns. These include whales and dolphins, which do not shut down their entire brain when they sleep, but only half of it, keeping the rest awake. They also show no sign of REM sleep, suggesting that they may only experience non-REM dreams, which are less vivid. This is surprising because we tend to think of whales and dolphins as having complex inner lives. It's thought that they don't experience REM sleep because during REM sleep animals are more vulnerable to extremes of temperature."
+    },
+    {
+      "label": "[5]",
+      "text": "Nevertheless, in many cases REM sleep does seem to have benefits. Growing evidence from birds and mammals suggests that REM sleep and dreaming are important for forming memories and learning. It is believed that when events are replayed in dreams, this helps to integrate memories into longer-term storage. As soon as animals evolved moderately complex lifestyles, they would have needed to dream in order to manage these lifestyles."
+    },
+    {
+      "label": "[6]",
+      "text": "However, we still don't understand how this outward behaviour relates to internal experience. It seems impossible to know what it is like to be a rat or a pigeon, let alone imagine their dreamscapes. We are quick to interpret the twitching limbs and quiet barks of sleeping dogs, but the truth is that we don't know if there is an internal experience of chasing rabbits that comes along with that."
+    },
+    {
+      "label": "[7]",
+      "text": "Another non-human dreamer offers insight here. In 2019, while making a documentary, David Scheel of Alaska Pacific University in the USA housed an octopus named Heidi in a tank in his living room. At one point, in the middle of the night, Heidi seemed to dream: her limbs and head moved, and her skin rapidly changed colour, as though she was pursuing a crab."
+    },
+    {
+      "label": "[8]",
+      "text": "Similarly, a report recently emerged of a sleeping octopus apparently having a nightmare. Costello, as the octopus was called, thrashed around, extended his mantle as if trying to make himself look bigger, and squirted ink as though he were being attacked by a predator. The nightmare study is intriguing, says Scheel, but is only based on one animal. He argues that as well as outward behaviour, brain imaging is needed to show that the octopuses are replaying sequences of activities from their waking lives in dreams."
+    },
+    {
+      "label": "[9]",
+      "text": "The trouble is that we will never be able to experience any animal's dreams. That goes for other humans' dreams too. But we can try to imagine what these dreamscapes are like by meeting animals on their own terms. For example, vision is the dominant sense for many humans, and so our dreams are heavily visual too. Dogs primarily navigate the world using smell while spiders rely much more on vibrations. It is likely that dreaming has served multiple purposes since the first complex animals evolved. And if this is the case, it is possible that better understanding of these purposes might shed light on the true purpose of our own dreams."
+    }
+  ],
+  "target_words": [
+    "complex",
+    "dominant",
+    "insight",
+    "integrate",
+    "internal",
+    "interpret",
+    "nevertheless",
+    "physical"
+  ],
+  "questions": [
+    {
+      "number": 1,
+      "q_type": "table",
+      "prompt": "1 ............ : similar brain patterns were observed when active and sleeping (indicative of dreaming)",
+      "options": [],
+      "correct_answer": "rats",
+      "clue_paragraph": "[2]",
+      "clue_text": "researchers compared the brain patterns of rats running through a maze when awake with their brain patterns during REM sleep. They found the patterns were very similar",
+      "explanation": "Đoạn 2: Chuột (rats) có sóng não khi ngủ trùng khớp khi chạy trong mê cung lúc thức.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 2,
+      "q_type": "table",
+      "prompt": "when sleeping, pigeons displayed activity in parts of the brain that deal with 2 ............ input",
+      "options": [],
+      "correct_answer": "visual",
+      "clue_paragraph": "[3]",
+      "clue_text": "REM sleep activity was high in brain regions involved in processing visual information",
+      "explanation": "Đoạn 3: Vùng não xử lý tín hiệu thị giác (visual information/input).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 3,
+      "q_type": "table",
+      "prompt": "still have 3 ............ their brain awake when they sleep",
+      "options": [],
+      "correct_answer": "half",
+      "clue_paragraph": "[4]",
+      "clue_text": "whales and dolphins, which do not shut down their entire brain when they sleep, but only half of it, keeping the rest awake.",
+      "explanation": "Đoạn 4: Cá voi và cá heo giữ một nửa não thức (half of it).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 4,
+      "q_type": "table",
+      "prompt": "don't experience REM sleep, as this could affect their sensitivity to 4 ............",
+      "options": [],
+      "correct_answer": "temperature",
+      "clue_paragraph": "[4]",
+      "clue_text": "during REM sleep animals are more vulnerable to extremes of temperature.",
+      "explanation": "Đoạn 4: Tránh nhạy cảm quá mức trước nhiệt độ cực đoan (extremes of temperature).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 5,
+      "q_type": "table",
+      "prompt": "their dreams are probably not very 5 ............",
+      "options": [],
+      "correct_answer": "vivid",
+      "clue_paragraph": "[4]",
+      "clue_text": "suggesting that they may only experience non-REM dreams, which are less vivid.",
+      "explanation": "Đoạn 4: Giấc mơ non-REM kém sống động (not very vivid).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 6,
+      "q_type": "tfng",
+      "prompt": "Dreaming about past experiences helps us to create lasting memories of them.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "TRUE",
+      "clue_paragraph": "[5]",
+      "clue_text": "when events are replayed in dreams, this helps to integrate memories into longer-term storage.",
+      "explanation": "Đoạn 5: Giấc mơ tái hiện sự kiện giúp củng cố ký ức vào bộ nhớ dài hạn (lasting memories = longer-term storage).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 7,
+      "q_type": "tfng",
+      "prompt": "It is now possible to tell what type of dream a dog is having.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "FALSE",
+      "clue_paragraph": "[6]",
+      "clue_text": "We are quick to interpret the twitching limbs and quiet barks of sleeping dogs, but the truth is that we don't know if there is an internal experience of chasing rabbits that comes along with that.",
+      "explanation": "Đoạn 6: Chưa thể biết chó có trải nghiệm đuổi thỏ hay không ('we don't know'), mâu thuẫn với 'now possible to tell'.",
+      "trap_type": "[TRAP-EXTREME]",
+      "trap_tag": "[TRAP-EXTREME]"
+    },
+    {
+      "number": 8,
+      "q_type": "tfng",
+      "prompt": "David Scheel's documentary was influential on other research into the sleeping patterns of octopuses.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "NOT GIVEN",
+      "clue_paragraph": "[7]",
+      "clue_text": "In 2019, while making a documentary, David Scheel of Alaska Pacific University in the USA housed an octopus named Heidi in a tank in his living room.",
+      "explanation": "Đoạn 7: Bài đọc chỉ kể về việc quay phim tài liệu nuôi bạch tuộc Heidi, KHÔNG nhắc tới sức ảnh hưởng của bộ phim lên các nghiên cứu khác.",
+      "trap_type": "[NOT-GIVEN / OVER-INFERENCE]",
+      "trap_tag": "[NOT-GIVEN / OVER-INFERENCE]"
+    },
+    {
+      "number": 9,
+      "q_type": "tfng",
+      "prompt": "While it was asleep, the octopus called Costello reacted as if it was hunting.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "FALSE",
+      "clue_paragraph": "[8]",
+      "clue_text": "Costello... thrashed around, extended his mantle as if trying to make himself look bigger, and squirted ink as though he were being attacked by a predator.",
+      "explanation": "Đoạn 8: Costello phản ứng như thể đang bị thú săn mồi tấn công (attacked by predator), không phải đang đi săn (hunting).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 10,
+      "q_type": "tfng",
+      "prompt": "Scheel believes more research into octopuses' dreams should be carried out.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "TRUE",
+      "clue_paragraph": "[8]",
+      "clue_text": "He argues that as well as outward behaviour, brain imaging is needed to show that the octopuses are replaying sequences of activities from their waking lives in dreams.",
+      "explanation": "Đoạn 8: Scheel khẳng định cần tiến hành chụp ảnh não bộ để kiểm chứng giấc mơ của bạch tuộc.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 11,
+      "q_type": "tfng",
+      "prompt": "We may soon be able to share the dreams of other human beings.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "FALSE",
+      "clue_paragraph": "[9]",
+      "clue_text": "The trouble is that we will never be able to experience any animal's dreams. That goes for other humans' dreams too.",
+      "explanation": "Đoạn 9: Tác giả nhấn mạnh con người sẽ KHÔNG BAO GIỜ có thể trải nghiệm giấc mơ của người khác ('will never be able to'), trái ngược với 'may soon be able to'.",
+      "trap_type": "[TRAP-EXTREME]",
+      "trap_tag": "[TRAP-EXTREME]"
+    },
+    {
+      "number": 12,
+      "q_type": "tfng",
+      "prompt": "Hearing may be an important part of the dreams of some animals.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "NOT GIVEN",
+      "clue_paragraph": "[9]",
+      "clue_text": "vision is the dominant sense for many humans... Dogs primarily navigate the world using smell while spiders rely much more on vibrations.",
+      "explanation": "Đoạn 9 chỉ bàn về thị giác, khứu giác, rung động; KHÔNG nhắc tới thính giác (hearing) trong giấc mơ động vật.",
+      "trap_type": "[NOT-GIVEN / OVER-INFERENCE]",
+      "trap_tag": "[NOT-GIVEN / OVER-INFERENCE]"
+    },
+    {
+      "number": 13,
+      "q_type": "tfng",
+      "prompt": "Interest in the reasons why humans dream has increased greatly in recent times.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "NOT GIVEN",
+      "clue_paragraph": "[9]",
+      "clue_text": "It is likely that dreaming has served multiple purposes since the first complex animals evolved. And if this is the case, it is possible that better understanding of these purposes might shed light on the true purpose of our own dreams.",
+      "explanation": "Đoạn 9 nêu hy vọng hiểu rõ hơn mục đích giấc mơ của con người, KHÔNG có thông tin so sánh mức độ quan tâm gia tăng gần đây.",
+      "trap_type": "[NOT-GIVEN / OVER-INFERENCE]",
+      "trap_tag": "[NOT-GIVEN / OVER-INFERENCE]"
+    }
+  ]
+}

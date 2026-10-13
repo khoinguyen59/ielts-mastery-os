@@ -1,0 +1,67 @@
+/* IELTS Mastery OS — Bespoke Brand & Topbar Pills Geometry */
+
+/* 1. Official Academic Cabi Brand Badge */
+.duo-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 19px; color: #ffffff; user-select: none; }
+.brand-mascot-badge { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(15, 23, 42, 0.7); border: 2px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); overflow: hidden; flex-shrink: 0; }
+.brand-mascot-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.brand-text { font-family: var(--font-main); font-weight: 900; letter-spacing: 0.6px; color: #ffffff; }
+
+/* 2. Standardized Topbar Stat Pills Geometry (9999px radius, 38px height, 2.5px border, absolute centering) */
+.duo-stat-pill,
+.gamified-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    padding: 0 14px;
+    border-radius: 9999px;
+    border: 2.5px solid transparent;
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: 13.5px;
+    line-height: 1;
+    box-sizing: border-box;
+    gap: 7px;
+    user-select: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.28);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+}
+
+.duo-stat-pill:active,
+.gamified-stat-pill:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.28); }
+
+/* Decoupled Icon and Value Geometry */
+.duo-stat-pill .pill-icon,
+.gamified-stat-pill .pill-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; }
+.duo-stat-pill .pill-svg,
+.gamified-stat-pill .pill-svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+.duo-stat-pill .pill-val,
+.gamified-stat-pill .pill-val { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 13px; letter-spacing: -0.2px; transform: translateY(0.5px); }
+
+/* 3. Stat Pill Color Variants */
+.duo-stat-pill.placement-pill,
+.placement-pill-btn { background: rgba(2, 132, 199, 0.18) !important; border-color: #0284c7 !important; color: #38bdf8 !important; box-shadow: 0 3px 0 #0369a1 !important; cursor: pointer; }
+.duo-stat-pill.placement-pill:hover,
+.placement-pill-btn:hover { background: rgba(2, 132, 199, 0.28) !important; border-color: #38bdf8 !important; }
+
+.duo-stat-pill.streak-pill,
+.streak-pill { background: rgba(249, 115, 22, 0.16) !important; border-color: #f97316 !important; color: #fb923c !important; box-shadow: 0 3px 0 #c2410c !important; }
+
+.duo-stat-pill.coin-pill,
+.coin-pill { background: rgba(245, 158, 11, 0.16) !important; border-color: #f59e0b !important; color: #fbbf24 !important; box-shadow: 0 3px 0 #b45309 !important; }
+
+.duo-stat-pill.heart-pill,
+.heart-pill { background: rgba(244, 63, 94, 0.16) !important; border-color: #f43f5e !important; color: #fb7185 !important; box-shadow: 0 3px 0 #be123c !important; }
+
+/* 4. Topbar Right Uniform Skyline */
+.topbar-right { display: flex; align-items: center; gap: 9px; }
+.topbar-right .duo-icon-btn,
+.topbar-right .duo-backup-btn { height: 38px; min-height: 38px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; }
+
+/* 5. Roadmap Vector Node Icons */
+.path-bubble-node .node-icon,
+.path-chest-node .chest-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+.node-svg { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35)); }

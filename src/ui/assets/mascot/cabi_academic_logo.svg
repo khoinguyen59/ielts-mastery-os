@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Crest Gradients -->
+    <linearGradient id="crestBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A1128"/>
+      <stop offset="50%" stop-color="#131f3d"/>
+      <stop offset="100%" stop-color="#070c1e"/>
+    </linearGradient>
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="50%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="tasselGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="furGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D49A62"/>
+      <stop offset="70%" stop-color="#C08A54"/>
+      <stop offset="100%" stop-color="#A56E3A"/>
+    </linearGradient>
+    <linearGradient id="muzzleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#AD7B51"/>
+      <stop offset="100%" stop-color="#8F5E33"/>
+    </linearGradient>
+    <linearGradient id="emeraldRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Academic Shield Badge -->
+  <g filter="url(#softGlow)">
+    <circle cx="256" cy="256" r="236" fill="url(#crestBg)"/>
+    <circle cx="256" cy="256" r="236" fill="none" stroke="url(#goldBorder)" stroke-width="8"/>
+    <circle cx="256" cy="256" r="222" fill="none" stroke="url(#goldBorder)" stroke-width="2" stroke-dasharray="6,4" opacity="0.65"/>
+  </g>
+
+  <!-- Laurels & Stars for Academic Excellence -->
+  <g opacity="0.85">
+    <polygon points="256,48 262,64 278,64 265,74 270,90 256,80 242,90 247,74 234,64 250,64" fill="#FBBF24"/>
+    <polygon points="110,95 114,106 126,106 116,113 120,124 110,117 100,124 104,113 94,106 106,106" fill="#F59E0B" opacity="0.8"/>
+    <polygon points="402,95 406,106 418,106 408,113 412,124 402,117 392,124 396,113 386,106 398,106" fill="#F59E0B" opacity="0.8"/>
+  </g>
+
+  <!-- Cabi Character Group -->
+  <g transform="translate(256, 290)">
+    <!-- Scarf / Academic Robe Collar -->
+    <g id="cabi-robe">
+      <path d="M-85 90 C-40 145, 40 145, 85 90 L75 145 C35 175, -35 175, -75 145 Z" fill="url(#emeraldRibbon)"/>
+      <path d="M-75 100 C-35 140, 35 140, 75 100" fill="none" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="0,112 12,132 -12,132" fill="#FBBF24"/>
+      <circle cx="0" cy="126" r="4" fill="#B45309"/>
+    </g>
+
+    <!-- Ears -->
+    <g id="cabi-ears">
+      <!-- Left Ear -->
+      <circle cx="-62" cy="-96" r="26" fill="url(#furGrad)" stroke="#4A2E1A" stroke-width="6"/>
+      <circle cx="-58" cy="-94" r="14" fill="#A56E3A"/>
+      <!-- Right Ear -->
+      <circle cx="62" cy="-96" r="26" fill="url(#furGrad)" stroke="#4A2E1A" stroke-width="6"/>
+      <circle cx="58" cy="-94" r="14" fill="#A56E3A"/>
+    </g>
+
+    <!-- Head Body -->
+    <g id="cabi-head" filter="url(#badgeShadow)">
+      <path d="M0 -115 C55 -110, 85 -80, 105 -15 C118 45, 115 110, 50 115 C15 117, -15 117, -50 115 C-115 110, -118 45, -105 -15 C-85 -80, -55 -110, 0 -115 Z"
+            fill="url(#furGrad)" stroke="#4A2E1A" stroke-width="7"/>
+    </g>
+
+    <!-- Cheeks Blush -->
+    <g id="cabi-cheeks">
+      <ellipse cx="-82" cy="18" rx="16" ry="10" fill="#F4A7B9" opacity="0.85"/>
+      <ellipse cx="82" cy="18" rx="16" ry="10" fill="#F4A7B9" opacity="0.85"/>
+    </g>
+
+    <!-- Muzzle & Mouth -->
+    <g id="cabi-muzzle">
+      <ellipse cx="0" cy="40" rx="56" ry="48" fill="url(#muzzleGrad)"/>
+      <!-- Nose -->
+      <path d="M-12 14 C-4 22, 4 22, 12 14" fill="none" stroke="#2E1C0F" stroke-width="6" stroke-linecap="round"/>
+      <!-- Mouth line -->
+      <path d="M0 20 L0 38 M0 38 C-8 54, -24 46, -26 36 M0 38 C8 54, 24 46, 26 36"
+            fill="none" stroke="#2E1C0F" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Eyes with intelligent highlight -->
+    <g id="cabi-eyes">
+      <ellipse cx="-48" cy="-26" rx="6.5" ry="9" fill="#2E1C0F"/>
+      <circle cx="-46" cy="-29" r="2.8" fill="#FFFFFF"/>
+      <ellipse cx="48" cy="-26" rx="6.5" ry="9" fill="#2E1C0F"/>
+      <circle cx="50" cy="-29" r="2.8" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Scholar Round Glasses -->
+    <g id="cabi-glasses">
+      <!-- Lens glass reflection -->
+      <circle cx="-48" cy="-24" r="26" fill="rgba(56, 189, 248, 0.16)"/>
+      <circle cx="48" cy="-24" r="26" fill="rgba(56, 189, 248, 0.16)"/>
+      <!-- Lens sheen path -->
+      <path d="M-62 -34 A24 24 0 0 1 -42 -44" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+      <path d="M34 -34 A24 24 0 0 1 54 -44" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+      <!-- Frames -->
+      <circle cx="-48" cy="-24" r="26" fill="none" stroke="#0F172A" stroke-width="6"/>
+      <circle cx="48" cy="-24" r="26" fill="none" stroke="#0F172A" stroke-width="6"/>
+      <!-- Bridge -->
+      <path d="M-22 -24 C-10 -32, 10 -32, 22 -24" fill="none" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+      <!-- Temples -->
+      <path d="M-74 -24 L-96 -20" fill="none" stroke="#0F172A" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M74 -24 L96 -20" fill="none" stroke="#0F172A" stroke-width="5.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- Scholar Mortarboard Graduation Cap -->
+    <g id="mortarboard-cap" transform="translate(0, -96)">
+      <!-- Skull cap band sitting on head -->
+      <ellipse cx="0" cy="10" rx="62" ry="22" fill="#0B1329" stroke="#1E293B" stroke-width="3"/>
+      <!-- Mortarboard Diamond Top (Lozenge) -->
+      <polygon points="0,-48 135,-12 0,22 -135,-12" fill="url(#capGrad)" stroke="#38BDF8" stroke-width="2.5" filter="url(#badgeShadow)"/>
+      <polygon points="0,-45 128,-12 0,18 -128,-12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+
+      <!-- Center Gold Button -->
+      <ellipse cx="0" cy="-12" rx="10" ry="7" fill="url(#tasselGold)" stroke="#B45309" stroke-width="2"/>
+
+      <!-- Flowing Golden Tassel (Left side) -->
+      <g id="tassel">
+        <path d="M0 -12 C-35 -14, -75 0, -88 28" fill="none" stroke="url(#tasselGold)" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Tassel Ribbon Clasp -->
+        <rect x="-94" y="27" width="12" height="6" rx="2" fill="#D97706"/>
+        <!-- Tassel Fringe Brush -->
+        <path d="M-94 33 C-98 52, -96 66, -92 78 L-82 78 C-80 66, -82 52, -84 33 Z" fill="url(#tasselGold)" stroke="#B45309" stroke-width="1.5"/>
+        <line x1="-88" y1="36" x2="-87" y2="76" stroke="#FEF08A" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Academic Banner "IELTS MASTERY" Ribbon -->
+  <g transform="translate(256, 464)">
+    <path d="M-150 -18 L150 -18 L136 18 L-136 18 Z" fill="#0F172A" stroke="url(#goldBorder)" stroke-width="3"/>
+    <text x="0" y="5" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="20" fill="#FDE68A" text-anchor="middle" letter-spacing="3">ACADEMIC CABI</text>
+  </g>
+</svg>

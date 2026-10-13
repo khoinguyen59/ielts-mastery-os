@@ -1,0 +1,119 @@
+/* ==========================================================================
+   IELTS Mastery OS — Gamification & Progression Styling (R4 & R5)
+   Deep Oceanic Navy & Google Stitch UI Bento System (< 170 lines)
+   ========================================================================== */
+
+/* 1. Locked Roadmap Nodes */
+.path-bubble-node.node-locked,
+.path-chest-node.node-locked {
+    filter: grayscale(0.85) opacity(0.65);
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    box-shadow: 0 4px 0 #0f172a !important;
+    cursor: not-allowed !important;
+    position: relative;
+}
+.path-bubble-node.node-locked:hover,
+.path-chest-node.node-locked:hover {
+    transform: translateY(0) !important;
+}
+.node-lock-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background: #0f172a;
+    border: 2px solid #f59e0b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    z-index: 6;
+}
+
+/* 2. Locked Navigation Tabs */
+.nav-tab.tab-locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    position: relative;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+.nav-tab.tab-locked::after {
+    content: " 🔒";
+    font-size: 11px;
+    margin-left: 2px;
+}
+
+/* 3. Duolingo Vibrational Shake Animation */
+@keyframes duoShake {
+    0%, 100% { transform: translateX(0); }
+    15%, 45%, 75% { transform: translateX(-8px) rotate(-1.5deg); }
+    30%, 60%, 90% { transform: translateX(8px) rotate(1.5deg); }
+}
+.duo-shake {
+    animation: duoShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+}
+
+/* 4. Slide-up Lock Warning Drawer */
+.duo-lock-drawer {
+    position: fixed;
+    bottom: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 580px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    z-index: 9999;
+    transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.duo-lock-drawer.active { bottom: 0; }
+.lock-drawer-left { display: flex; align-items: center; gap: 12px; }
+.lock-drawer-icon { font-size: 28px; flex-shrink: 0; }
+.lock-drawer-text h4 { margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: #f59e0b; }
+.lock-drawer-text p { margin: 0; font-size: 12.5px; color: #cbd5e1; line-height: 1.4; }
+.btn-lock-ack {
+    padding: 8px 18px;
+    background: #f59e0b;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 12.5px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 3px 0 #b45309;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.btn-lock-ack:active { transform: translateY(2px); box-shadow: 0 1px 0 #b45309; }
+
+/* 5. Energy Exhausted Modal (Hearts = 0) */
+.energy-exhausted-dialog { max-width: 500px; border: 2px solid #ef4444; }
+.energy-mascot-row { text-align: center; margin-bottom: 14px; }
+.energy-mascot-row .mascot-clumsy-head { font-size: 42px; display: inline-block; animation: duoShake 1.5s infinite; }
+.energy-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.energy-option-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.15s, border-color 0.15s;
+}
+.energy-option-card:hover { border-color: #0284c7; transform: translateY(-2px); }
+.energy-option-icon { font-size: 32px; margin-bottom: 8px; }
+.energy-option-title { font-size: 13.5px; font-weight: 800; color: #f8fafc; margin-bottom: 4px; }
+.energy-option-desc { font-size: 11.5px; color: #94a3b8; margin-bottom: 12px; line-height: 1.35; }

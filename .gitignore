@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+dist/
+build/
+.cache/
+
+# Agent, Docs, and Intermediate Files (Strictly excluded)
+.agents/
+.github/
+docs/
+my-vocab/
+repos/
+scratch/
+scripts/
+graphify-out/
+Khoi/
+Trong/
+*.apk
+*.xapk
+*.docx
+*.pdf
+AGENTS.md
+CO_CHE_HOAT_DONG_AI_AGENT.md
+DESIGN.md
+PROJECT.md
+TEST_INFRA.md
+TEST_READY.md
+
+# Data intermediates & runtime DB
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/extracted/
+data/textbooks/
+data/pdf_exports/
+
+# Python & testing caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.tmp
+*.log

@@ -1,0 +1,243 @@
+{
+  "id": "t1_p1",
+  "test_number": 1,
+  "passage_number": 1,
+  "title": "The Davies Sisters: Art Collectors",
+  "subtitle": "How two Welsh sisters used their immense fortune to amass a world-class collection of French Impressionist masterpieces for public benefit.",
+  "paragraphs": [
+    {
+      "label": "[1]",
+      "text": "Gwendoline (1882-1951) and Margaret (1884-1963) Davies were the granddaughters of David Davies, a Welshman who amassed a fortune in the shipping and mining industries. In 1907, when Gwendoline came into her inheritance (Margaret would follow in 1909), the sisters were said to be the wealthiest unmarried women in Britain. Their religious upbringing in rural Wales gave them a deep sense of social responsibility and they chose to use their inheritance for cultural and philanthropic purposes."
+    },
+    {
+      "label": "[2]",
+      "text": "While there was no real family history of art collecting, the sisters' education was rigorously geared toward such pursuits. Their London school focused on cultural rather than academic study, and they travelled extensively with their governess, Jane Blaker, visiting art galleries and making extensive notes on the collections there."
+    },
+    {
+      "label": "[3]",
+      "text": "The sisters began to make regular art purchases from 1908, which roughly coincided with the dates of their inheritance. They took advice from various people, including the art dealer Hugh Blaker (the brother of Jane Blaker) and David Croal Thompson, who was also an art dealer. While it was long assumed that these men were largely responsible for the nature of the sisters' collection, it has recently been accepted that Gwendoline and Margaret retained a far more active role in the process."
+    },
+    {
+      "label": "[4]",
+      "text": "The sisters' journals reveal their preference for Old Master paintings. Yet they initially made very few attempts to secure any such works. While the sisters were wealthy in relative terms, their income was nothing compared to the fortunes of American art collectors of this period, such as J. Pierpont Morgan. Quite simply, high quality Old Master works were, if not beyond their means, then beyond what they were willing to pay for them. Instead, their early purchases were of the fashionable, safe variety, and included, for example, paintings by the French artist Jean-Baptiste-Camille Corot."
+    },
+    {
+      "label": "[5]",
+      "text": "However, it was only a few years before their collecting took a new direction and they turned to the work of the French Impressionists. We know that Hugh Blaker, as a champion of contemporary French art had a hand in the decision, and we know also that they would have seen examples on their various trips to Paris. Whatever the precise reason for this change, their first purchases of Impressionist art, made in October 1912, were scenes of Venice by the French artist Claude Monet. Over the next 12 years, the sisters amassed the bulk of their Impressionist collection, including six further works by Monet, two more by Manet, and three by Renoir, including his well-known painting La Parisienne."
+    },
+    {
+      "label": "[6]",
+      "text": "The First World War (1914-1918) played a part in the development of the sisters' collection. Their initial response to the war effort was to finance the safe passage of artists from occupied Belgium to Wales, as a humanitarian act, but also with the hope of establishing a vibrant artists' community in the area. Later in the conflict, both sisters decided to volunteer at a canteen for troops at Troyes, in northern France; Gwendoline in 1916, followed by Margaret in 1917."
+    },
+    {
+      "label": "[7]",
+      "text": "It was tedious and distressing work, which would have a permanent effect on Gwendoline's health. Yet on one of numerous trips to nearby Paris, she visited the Bernheim-Jeune Gallery. Here she acquired two works by Cezanne - Provencal Landscape and The Francois Zola Dam. The paintings were shipped directly to Bath, England, where they became the first works by Cezanne to go on display in a public gallery in Britain."
+    },
+    {
+      "label": "[8]",
+      "text": "Commentators have often described the sisters as unlikely pioneer collectors. Much is made of their isolation in rural Wales and the fact that they didn't make friends with artists or gallery owners. Yet they didn't feel obliged to follow fashionable tastes and were free to pursue their own preferences. Although they relied on a trusted circle of advisers, they made frequent trips to London and Paris, and also regularly had paintings sent to their home for consideration."
+    },
+    {
+      "label": "[9]",
+      "text": "By the early 1920s, Gwendoline felt increasingly uncomfortable buying art works when faced with the poverty and social upheaval created by the First World War. Her philanthropic pursuits then became focused almost exclusively on social causes and the development of the sisters' home at Gregynog Hall into a conference center and venue for the Gregynog Festival of Music and Poetry. Gwendoline made her final art purchase in March 1926. Margaret also stopped collecting around this time, but started again in the 1930s acquiring, on a relatively small scale, work by contemporary British artists."
+    },
+    {
+      "label": "[10]",
+      "text": "The sisters collected French Impressionist paintings at a time when such art was routinely ignored by individuals and institutions alike. The Gwendoline and Margaret Davies collection, donated in 1951 and 1963 respectively to the National Museum Wales, contains major examples of work by leading French Impressionists. In collecting paintings that they loved, the sisters created a lasting and meaningful cultural legacy for the people of Wales and beyond."
+    }
+  ],
+  "target_words": [
+    "bulk",
+    "community",
+    "conflict",
+    "contemporary",
+    "final",
+    "finance",
+    "initial",
+    "period",
+    "precise",
+    "pursue"
+  ],
+  "questions": [
+    {
+      "number": 1,
+      "q_type": "note",
+      "prompt": "their grandfather's wealth came from 1 .......... and transportation businesses",
+      "options": [],
+      "correct_answer": "mining",
+      "clue_paragraph": "[1]",
+      "clue_text": "David Davies, a Welshman who amassed a fortune in the shipping and mining industries.",
+      "explanation": "Đoạn 1: Grandfather made fortune in shipping and mining industries.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 2,
+      "q_type": "note",
+      "prompt": "their 2 .......... was designed to give them an interest in activities such as collecting art",
+      "options": [],
+      "correct_answer": "education",
+      "clue_paragraph": "[2]",
+      "clue_text": "the sisters' education was rigorously geared toward such pursuits.",
+      "explanation": "Đoạn 2: Education was rigorously geared toward art collecting.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 3,
+      "q_type": "note",
+      "prompt": "they took lengthy 3 .......... about the things they saw in art galleries",
+      "options": [],
+      "correct_answer": "notes",
+      "clue_paragraph": "[2]",
+      "clue_text": "visiting art galleries and making extensive notes on the collections there.",
+      "explanation": "Đoạn 2: making extensive notes on the collections there.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 4,
+      "q_type": "note",
+      "prompt": "their 4 .......... showed they liked Old Master paintings, but they were expensive to buy",
+      "options": [],
+      "correct_answer": "journals",
+      "clue_paragraph": "[4]",
+      "clue_text": "The sisters' journals reveal their preference for Old Master paintings.",
+      "explanation": "Đoạn 4: The sisters' journals reveal their preference for Old Master paintings.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 5,
+      "q_type": "note",
+      "prompt": "the first Impressionist paintings they bought showed places in 5 ..........",
+      "options": [],
+      "correct_answer": "Venice",
+      "clue_paragraph": "[5]",
+      "clue_text": "their first purchases of Impressionist art, made in October 1912, were scenes of Venice by the French artist Claude Monet.",
+      "explanation": "Đoạn 5: first purchases of Impressionist art were scenes of Venice.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 6,
+      "q_type": "note",
+      "prompt": "they worked in a 6 .......... for soldiers in France",
+      "options": [],
+      "correct_answer": "canteen",
+      "clue_paragraph": "[6]",
+      "clue_text": "volunteer at a canteen for troops at Troyes, in northern France",
+      "explanation": "Đoạn 6: volunteer at a canteen for troops (soldiers) in northern France.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 7,
+      "q_type": "note",
+      "prompt": "were not considered typical collectors - they lived in isolation in the countryside and did not have any 7 .......... who were artists",
+      "options": [],
+      "correct_answer": "friends",
+      "clue_paragraph": "[8]",
+      "clue_text": "Much is made of their isolation in rural Wales and the fact that they didn't make friends with artists or gallery owners.",
+      "explanation": "Đoạn 8: didn't make friends with artists or gallery owners.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 8,
+      "q_type": "tfng",
+      "prompt": "The Davies sisters' childhood influenced the way they decided to use their wealth.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "TRUE",
+      "clue_paragraph": "[1]",
+      "clue_text": "Their religious upbringing in rural Wales gave them a deep sense of social responsibility and they chose to use their inheritance for cultural and philanthropic purposes.",
+      "explanation": "Đoạn 1: Việc nuôi dạy tôn giáo từ thời thơ ấu (religious upbringing) hun đúc ý thức trách nhiệm xã hội, khiến họ dùng tài sản cho từ thiện và văn hóa.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 9,
+      "q_type": "tfng",
+      "prompt": "The Jean-Baptiste-Camille Corot paintings in the Davies sisters' collection were purchased from a gallery in France.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "NOT GIVEN",
+      "clue_paragraph": "[4]",
+      "clue_text": "Instead, their early purchases were of the fashionable, safe variety, and included, for example, paintings by the French artist Jean-Baptiste-Camille Corot.",
+      "explanation": "Đoạn 4: Bài đọc chỉ nói tranh của họa sĩ Pháp Corot, hoàn toàn KHÔNG đề cập nơi mua tranh (gallery in France).",
+      "trap_type": "[NOT-GIVEN / OVER-INFERENCE]",
+      "trap_tag": "[NOT-GIVEN / OVER-INFERENCE]"
+    },
+    {
+      "number": 10,
+      "q_type": "tfng",
+      "prompt": "Hugh Blaker opposed the Davies sisters' decision to buy art by French Impressionists.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "FALSE",
+      "clue_paragraph": "[5]",
+      "clue_text": "We know that Hugh Blaker, as a champion of contemporary French art had a hand in the decision",
+      "explanation": "Đoạn 5: Hugh Blaker là người ủng hộ (champion) nghệ thuật Pháp đương đại và góp phần vào quyết định này, trái ngược với 'opposed'.",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    },
+    {
+      "number": 11,
+      "q_type": "tfng",
+      "prompt": "The exhibition of Cezanne paintings at the Bath gallery was very popular with the public.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "NOT GIVEN",
+      "clue_paragraph": "[7]",
+      "clue_text": "The paintings were shipped directly to Bath, England, where they became the first works by Cezanne to go on display in a public gallery in Britain.",
+      "explanation": "Đoạn 7: Bài đọc chỉ nêu đây là tác phẩm Cezanne đầu tiên trưng bày công cộng tại Anh, KHÔNG đề cập liệu có được công chúng đón nhận nhiệt tình hay không.",
+      "trap_type": "[NOT-GIVEN / OVER-INFERENCE]",
+      "trap_tag": "[NOT-GIVEN / OVER-INFERENCE]"
+    },
+    {
+      "number": 12,
+      "q_type": "tfng",
+      "prompt": "The impact of the First World War encouraged Gwendoline to reconsider her interest in collecting art.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "TRUE",
+      "clue_paragraph": "[9]",
+      "clue_text": "By the early 1920s, Gwendoline felt increasingly uncomfortable buying art works when faced with the poverty and social upheaval created by the First World War.",
+      "explanation": "Đoạn 9: Chứng kiến đói nghèo và biến động do Thế chiến I, Gwendoline cảm thấy không thoải mái khi mua tác phẩm nghệ thuật và chuyển hẳn sang hoạt động xã hội.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 13,
+      "q_type": "tfng",
+      "prompt": "The Davies sisters bought French Impressionist art during a period when very few people were doing so.",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "NOT GIVEN"
+      ],
+      "correct_answer": "TRUE",
+      "clue_paragraph": "[10]",
+      "clue_text": "The sisters collected French Impressionist paintings at a time when such art was routinely ignored by individuals and institutions alike.",
+      "explanation": "Đoạn 10: Vào thời điểm đó, tranh trường phái Ấn tượng thường bị cả cá nhân lẫn tổ chức ngó lơ (routinely ignored), tức là rất ít người mua.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    }
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "id": "t1_p2",
+  "test_number": 1,
+  "passage_number": 2,
+  "title": "Why We Need Silence",
+  "subtitle": "Examining the profound physiological and neurological benefits of quiet environments in an increasingly noisy modern world.",
+  "paragraphs": [
+    {
+      "label": "[A]",
+      "text": "Humans are finely attuned to noise, and for good reason. From an evolutionary perspective, sounds give us vital information, helping us navigate the world and avoid danger. To help ensure loud or unexpected noises get the attention they deserve, our internal chemistry alters in response to them. Our blood pressure goes up, muscles tense and glands release hormones that prepare us for fight or flight. In the short term, this is a good thing. When we are exposed to too much noise over the long term, however, those responses can lead to a multitude of health issues, from sleep disturbance to even cardiovascular disease."
+    },
+    {
+      "label": "[B]",
+      "text": "The World Health Organization has recently designated excessive noise as an 'underestimated threat' to public health, and has said that people living in cities such as Mumbai, Tokyo and Buenos Aires are being exposed to far more than the recommended 40 decibels of noise at night. A report from the European Environment Agency concluded that noise was an ongoing and widespread issue in Europe, with at least 1 in 5 people consistently exposed to levels considered harmful to health. 'There are no \"earlids\" that can protect your brain from noise,' says Nick Antonio, an acoustic consultant who has contributed to the British and international standards for noise."
+    },
+    {
+      "label": "[C]",
+      "text": "The good news is that several cities have been working to turn the volume down. One of the first to do so was London. 'By providing recommendations for quieter buses, reducing noise from roads and also controlling noise from aircraft, they were able to make the city quieter,' says Antonio. Other cities have introduced noise-reducing road coatings, for instance, alongside greenery that muffles sound. Some solutions are more specific: Washington DC's ban on petrol-powered leaf blowers came into effect recently, while in New York City, legislation has been approved to fine people who modify their vehicles to make them noisier. 'People are seeing the benefits of these more quiet environments in their cities,' Antonio says. 'I expect we will see much more of this in the future.'"
+    },
+    {
+      "label": "[D]",
+      "text": "Researchers are also seeking to understand what aspects of silent experiences are most beneficial to our health. One of the best-researched is the flotation tank: a lightproof, soundproof tank of salt water in which a person floats as a form of deep relaxation. While some people experience altered perception in the tanks, involving subtle humming sounds and visual effects, these effects are benign and do not detract from the benefits of the experience, says Justin Feinstein, a clinical neuropsychologist. 'When you don't have external sensory stimuli coming in, the brain tries to fill the void to make sense of this dark and silent world,' he explains. 'In these tanks, some people can even hear the sound of their eyes blinking,' says Feinstein. 'But it is the ability to focus on the breath that helps people reach a relaxed or meditative state.'"
+    },
+    {
+      "label": "[E]",
+      "text": "To further explore flotation tanks as a therapeutic tool, Feinstein and his colleagues recruited 50 people with a variety of conditions related to stress and had them answer a questionnaire prior to and following a flotation session. Participants reported decreases in muscle tension, pain and symptoms of their conditions after a single, 1-hour float, alongside an increase in feelings of relaxation and overall wellbeing. Less is known about what effects sensory deprivation can have on the brain. To investigate, Feinstein's team had 48 people participate in either three 90-minute float sessions or three 90-minute periods of relaxing on a chair which reclined. Participants had their brains scanned using functional magnetic resonance imaging at the beginning and end of the trial. Float sessions uniquely decreased activity in the default mode network (DMN), a collection of brain regions commonly linked with depression. Feinstein says it is an exciting finding, because flotation tanks seem to offer a way of 'resetting' our nervous system to prevent it from getting out of balance."
+    },
+    {
+      "label": "[F]",
+      "text": "Neurobiologist Tai Dotan Ben-Soussan is also an advocate of silence as a therapy. 'When we find ways to be quiet, we are not only quiet in our environment, but quiet in our inner selves,' she explains. 'This allows us to be more aware of what is happening around us and what the situation may require from us so we can provide [a more] adequate response.' Not everyone will benefit from silence to the same extent, but Ben-Soussan says one characteristic is key: the person must need to want to engage in the experience. 'We see from animal models and human studies that volition and intentionality is important,' she says. 'When people do not want silence, it can be very distressing.'"
+    },
+    {
+      "label": "[G]",
+      "text": "Eric Pfeifer, a psychotherapy researcher, also concedes that some people may not benefit from silence, particularly those who are in a heightened state of stress. 'People in these states may not be able to relax or calm down in a silent condition,' he says. Professional guidance can be useful, he adds, allowing people to approach silence slowly so that they can gradually enjoy the benefits. And Pfeifer is convinced that silence is more attainable in everyday life than people think. First, complete silence isn't necessary. In a recent study, he found that participants reported more relaxation and less boredom when they sat quietly in an outdoor garden compared with a completely silent room. Second, Pfeifer believes we don't need a lot of silence to gain benefits. 'You don't need to spend hours in silence,' he says. 'It is likely better to have more frequency of silence for a few minutes at a time than a longer period of silence only once a week. Just finding those places in your daily life where you can find some silence ... can make a big difference.'"
+    }
+  ],
+  "target_words": [
+    "adequate",
+    "approach",
+    "aware",
+    "benefit",
+    "detract",
+    "ensure",
+    "environment",
+    "excessive",
+    "external",
+    "internal",
+    "investigate",
+    "legislation",
+    "mode",
+    "modify",
+    "multitude"
+  ],
+  "questions": [
+    {
+      "number": 14,
+      "q_type": "matching",
+      "prompt": "examples of strategies to decrease the noise that the public are exposed to",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "correct_answer": "C",
+      "clue_paragraph": "[C]",
+      "clue_text": "London: quieter buses, reducing noise from roads... noise-reducing road coatings... ban on petrol-powered leaf blowers... fine people who modify vehicles",
+      "explanation": "Đoạn C liệt kê các chiến lược cụ thể giảm tiếng ồn: xe buýt êm hơn, mặt đường giảm âm, cấm máy thổi lá, phạt xe độ pô.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 15,
+      "q_type": "matching",
+      "prompt": "data indicating the extent of the problem of excessive noise",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "correct_answer": "B",
+      "clue_paragraph": "[B]",
+      "clue_text": "WHO: more than the recommended 40 decibels... EEA: at least 1 in 5 people consistently exposed to harmful levels",
+      "explanation": "Đoạn B đưa ra số liệu thống kê: trên 40 dB đêm tại Mumbai/Tokyo, 1 trong 5 người châu Âu chịu tiếng ồn độc hại.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 16,
+      "q_type": "matching",
+      "prompt": "a description of physiological changes in our bodies when we hear sudden noises",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "correct_answer": "A",
+      "clue_paragraph": "[A]",
+      "clue_text": "blood pressure goes up, muscles tense and glands release hormones that prepare us for fight or flight.",
+      "explanation": "Đoạn A miêu tả biến đổi sinh lý: huyết áp tăng, cơ bắp căng, tuyến nội tiết tiết hormone chiến-hay-chạy.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 17,
+      "q_type": "matching",
+      "prompt": "evidence that a relatively quiet environment can be more beneficial than a totally silent one",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "correct_answer": "G",
+      "clue_paragraph": "[G]",
+      "clue_text": "participants reported more relaxation and less boredom when they sat quietly in an outdoor garden compared with a completely silent room.",
+      "explanation": "Đoạn G: ngồi yên trong vườn hoa ngoài trời thư giãn và ít nhàm chán hơn so với phòng hoàn toàn im lặng.",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 18,
+      "q_type": "summary",
+      "prompt": "According to Justin Feinstein, flotation tanks allow people to concentrate on their own 18 .......... , which helps them relax and enables them to meditate.",
+      "options": [],
+      "correct_answer": "breath",
+      "clue_paragraph": "[D]",
+      "clue_text": "it is the ability to focus on the breath that helps people reach a relaxed or meditative state.",
+      "explanation": "Đoạn D: ability to focus on the breath (tập trung vào hơi thở).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 19,
+      "q_type": "summary",
+      "prompt": "Feinstein and his colleagues conducted an experiment in which 50 people, who were all suffering from stress and related issues, were given a 19 .......... to complete before and after using a flotation tank.",
+      "options": [],
+      "correct_answer": "questionnaire",
+      "clue_paragraph": "[E]",
+      "clue_text": "had them answer a questionnaire prior to and following a flotation session.",
+      "explanation": "Đoạn E: answer a questionnaire prior to and following (bảng câu hỏi).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 20,
+      "q_type": "summary",
+      "prompt": "Participants reported a reduction in their symptoms after an hour in the tank, together with signs of relaxation and improved general 20 ..........",
+      "options": [],
+      "correct_answer": "wellbeing",
+      "clue_paragraph": "[E]",
+      "clue_text": "alongside an increase in feelings of relaxation and overall wellbeing.",
+      "explanation": "Đoạn E: increase in feelings of relaxation and overall wellbeing (sức khỏe tổng thể).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 21,
+      "q_type": "summary",
+      "prompt": "Brain scans then revealed that those people who had been in a tank had decreased activity in parts of the brain associated with 21 ..........",
+      "options": [],
+      "correct_answer": "depression",
+      "clue_paragraph": "[E]",
+      "clue_text": "decreased activity in the default mode network (DMN), a collection of brain regions commonly linked with depression.",
+      "explanation": "Đoạn E: regions commonly linked with depression (trầm cảm).",
+      "trap_type": "[TRAP-PARAPHRASE]",
+      "trap_tag": "[TRAP-PARAPHRASE]"
+    },
+    {
+      "number": 22,
+      "q_type": "people",
+      "prompt": "It is unpleasant and upsetting for people to be placed in a silent environment against their will.",
+      "options": [
+        "A. Nick Antonio",
+        "B. Justin Feinstein",
+        "C. Tai Dotan Ben-Soussan",
+        "D. Eric Pfeifer"
+      ],
+      "correct_answer": "C",
+      "clue_paragraph": "[F]",
+      "clue_text": "Tai Dotan Ben-Soussan: 'When people do not want silence, it can be very distressing.'",
+      "explanation": "Đoạn F: Tai Dotan Ben-Soussan nhấn mạnh sự im lặng không tự nguyện (against their will) gây đau khổ (very distressing).",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    },
+    {
+      "number": 23,
+      "q_type": "people",
+      "prompt": "The trend towards creating quieter urban locations is likely to increase in the coming years.",
+      "options": [
+        "A. Nick Antonio",
+        "B. Justin Feinstein",
+        "C. Tai Dotan Ben-Soussan",
+        "D. Eric Pfeifer"
+      ],
+      "correct_answer": "A",
+      "clue_paragraph": "[C]",
+      "clue_text": "Antonio says. 'I expect we will see much more of this in the future.'",
+      "explanation": "Đoạn C: Chuyên gia âm học Nick Antonio nhận định xu hướng tạo không gian yên tĩnh đô thị sẽ gia tăng mạnh trong tương lai.",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    },
+    {
+      "number": 24,
+      "q_type": "people",
+      "prompt": "When our body's senses are completely deprived of input, our minds compensate for this by creating the illusion of images and sounds.",
+      "options": [
+        "A. Nick Antonio",
+        "B. Justin Feinstein",
+        "C. Tai Dotan Ben-Soussan",
+        "D. Eric Pfeifer"
+      ],
+      "correct_answer": "B",
+      "clue_paragraph": "[D]",
+      "clue_text": "Justin Feinstein: 'When you don't have external sensory stimuli coming in, the brain tries to fill the void to make sense of this dark and silent world'",
+      "explanation": "Đoạn D: Justin Feinstein phân tích não bộ tự lấp đầy khoảng trống bằng ảo giác âm thanh/hình ảnh khi mất kích thích ngoại cảnh.",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    },
+    {
+      "number": 25,
+      "q_type": "people",
+      "prompt": "Even a short amount of silent time can have positive impact.",
+      "options": [
+        "A. Nick Antonio",
+        "B. Justin Feinstein",
+        "C. Tai Dotan Ben-Soussan",
+        "D. Eric Pfeifer"
+      ],
+      "correct_answer": "D",
+      "clue_paragraph": "[G]",
+      "clue_text": "Eric Pfeifer: 'It is likely better to have more frequency of silence for a few minutes at a time than a longer period of silence only once a week.'",
+      "explanation": "Đoạn G: Eric Pfeifer chỉ ra chỉ cần vài phút im lặng thường xuyên mỗi ngày là đã có tác động tích cực lớn.",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    },
+    {
+      "number": 26,
+      "q_type": "people",
+      "prompt": "External and internal quietness makes us more conscious of events occurring in our surroundings and helps us react appropriately to these events.",
+      "options": [
+        "A. Nick Antonio",
+        "B. Justin Feinstein",
+        "C. Tai Dotan Ben-Soussan",
+        "D. Eric Pfeifer"
+      ],
+      "correct_answer": "C",
+      "clue_paragraph": "[F]",
+      "clue_text": "Tai Dotan Ben-Soussan: 'This allows us to be more aware of what is happening around us and what the situation may require from us so we can provide [a more] adequate response.'",
+      "explanation": "Đoạn F: Tai Dotan Ben-Soussan khẳng định sự tĩnh lặng giúp tỉnh thức hơn với môi trường xung quanh và phản ứng phù hợp.",
+      "trap_type": "[TRAP-ATTRIBUTION]",
+      "trap_tag": "[TRAP-ATTRIBUTION]"
+    }
+  ]
+}

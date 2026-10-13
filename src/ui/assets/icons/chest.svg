@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="50%" stop-color="#854d0e"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="lidWoodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ca8a04"/>
+      <stop offset="50%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </linearGradient>
+    <linearGradient id="chestGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="40%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="chestShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#261005" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- 3D Base Drop Shadow -->
+  <rect x="8" y="28" width="48" height="28" rx="6" fill="#1c0a02" transform="translate(0, 3)"/>
+
+  <!-- Lower Chest Box (Wood) -->
+  <rect x="8" y="27" width="48" height="28" rx="5" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2" filter="url(#chestShadow)"/>
+
+  <!-- Upper Chest Arched Lid (Wood) -->
+  <path d="M8 27 C8 15 16 11 32 11 C48 11 56 15 56 27 Z" fill="url(#lidWoodGrad)" stroke="#451a03" stroke-width="2"/>
+
+  <!-- Horizontal Gold Seam Band -->
+  <line x1="8" y1="27" x2="56" y2="27" stroke="#451a03" stroke-width="4"/>
+  <line x1="8" y1="27" x2="56" y2="27" stroke="url(#chestGold)" stroke-width="2.5"/>
+
+  <!-- Vertical Gold Reinforcing Straps -->
+  <!-- Left Strap -->
+  <path d="M18 13 C18 19 18 24 18 27 L18 55" fill="none" stroke="url(#chestGold)" stroke-width="4.5"/>
+  <circle cx="18" cy="18" r="1" fill="#451a03"/>
+  <circle cx="18" cy="35" r="1" fill="#451a03"/>
+  <circle cx="18" cy="48" r="1" fill="#451a03"/>
+
+  <!-- Right Strap -->
+  <path d="M46 13 C46 19 46 24 46 27 L46 55" fill="none" stroke="url(#chestGold)" stroke-width="4.5"/>
+  <circle cx="46" cy="18" r="1" fill="#451a03"/>
+  <circle cx="46" cy="35" r="1" fill="#451a03"/>
+  <circle cx="46" cy="48" r="1" fill="#451a03"/>
+
+  <!-- Center Gold Lock Clasp Plate -->
+  <g id="lock-clasp">
+    <rect x="27" y="23" width="10" height="13" rx="2.5" fill="url(#chestGold)" stroke="#78350f" stroke-width="1.2"/>
+    <!-- Keyhole -->
+    <circle cx="32" cy="28" r="1.8" fill="#451a03"/>
+    <polygon points="31,28 33,28 33.5,33 30.5,33" fill="#451a03"/>
+  </g>
+
+  <!-- Specular Curve Highlight on Lid -->
+  <path d="M12 20 C18 14 26 13 36 13" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+</svg>

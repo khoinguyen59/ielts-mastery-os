@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Mastery OS — Duolingo & Luyện Từ Gamified Academic Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pills_and_brand.css">
+    <link rel="stylesheet" href="css/auth_onboarding.css">
+    <link rel="stylesheet" href="css/gamification.css">
+</head>
+<body class="duo-theme">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="duo-topbar" id="app-header">
+        <div class="topbar-left">
+            <div class="duo-brand">
+                <span class="brand-mascot-badge"><img src="assets/mascot/cabi_academic_logo.svg" class="brand-mascot-img" alt="Cabi Academic Logo"></span>
+                <span class="brand-text">IELTS OS</span>
+            </div>
+            <nav class="duo-nav-tabs" id="main-nav">
+                <button class="nav-tab active" data-view="roadmap">🗺️ Lộ Trình</button>
+                <button class="nav-tab" data-view="flashcard">🎴 Flashcard 3D</button>
+                <button class="nav-tab" data-view="quiz">⚡ Quiz Blitz</button>
+                <button class="nav-tab" data-view="writing">✍️ Viết Task 2</button>
+                <button class="nav-tab" data-view="exam">📖 Thi Cam 21</button>
+                <button class="nav-tab" data-view="vocab">📚 Master 450</button>
+                <button class="nav-tab" data-view="analytics">📊 Thống Kê</button>
+            </nav>
+        </div>
+
+        <div class="topbar-right">
+            <div id="topbar-user-badge" class="topbar-user-badge-container"></div>
+            <button class="duo-stat-pill placement-pill placement-pill-btn" id="btn-open-placement" title="Chọn trình độ hoặc làm test"><span class="pill-icon"><img src="assets/icons/badge_trophy.svg" class="pill-svg" alt="Band"></span><span class="pill-val">Band <span id="header-user-band">6.5</span></span></button>
+            <div class="duo-stat-pill streak-pill" id="topbar-streak-pill" title="Chuỗi ngày học liên tục"><span class="pill-icon"><img src="assets/icons/flame.svg" class="pill-svg" alt="Streak"></span><span class="pill-val" id="topbar-streak-val">1</span></div>
+            <div class="duo-stat-pill coin-pill" id="topbar-coin-pill" title="Coin thưởng Master"><span class="pill-icon"><img src="assets/icons/coin.svg" class="pill-svg" alt="Coins"></span><span class="pill-val" id="topbar-coin-val">120</span></div>
+            <div class="duo-stat-pill heart-pill" id="topbar-heart-pill" title="Tim năng lượng"><span class="pill-icon"><img src="assets/icons/heart.svg" class="pill-svg" alt="Hearts"></span><span class="pill-val" id="topbar-heart-val">5</span></div>
+            <button class="duo-icon-btn" id="btn-toggle-sfx" title="Bật/Tắt âm thanh">🔊</button>
+            <button class="duo-icon-btn" id="btn-toggle-bgm" title="Bật/Tắt nhạc Lo-Fi">🎵</button>
+            <button class="duo-backup-btn" id="btn-export-backup" title="Sao lưu JSON">💾 Lưu</button>
+            <label class="duo-backup-btn" for="input-import-backup" title="Nạp file JSON">📂 Nạp</label>
+            <input type="file" id="input-import-backup" accept=".json" style="display:none">
+        </div>
+    </header>
+
+    <main class="duo-main-layout" id="app-main">
+        <!-- VIEW 1: THE WINDING ROADMAP PATH (DUOLINGO & LUYỆN TỪ STYLE) -->
+        <section class="view-panel active" id="view-roadmap">
+            <div class="roadmap-split-container">
+                <!-- Center: Winding Path -->
+                <div class="path-scroll-area" id="winding-path-scroll-area">
+                    <!-- UNIT 1 -->
+                    <div class="path-unit-card unit-green">
+                        <div class="unit-banner-head">
+                            <div>
+                                <span class="unit-sub">CHẶNG 1 • CAMBRIDGE 21</span>
+                                <h2 class="unit-title">Nền Tảng Từ Vựng Học Thuật & Khảo Sát Davies Sisters</h2>
+                            </div>
+                            <span class="unit-badge">100% AWL</span>
+                        </div>
+                    </div>
+
+                    <div class="winding-nodes-column">
+                        <div class="path-node-row pos-center">
+                            <button class="path-bubble-node node-active" data-action="open-flashcard" title="Chặng 1: Nạp Flashcard 3D">
+                                <span class="node-icon"><img src="assets/icons/badge_flashcard.svg" class="node-svg" alt="Flashcard"></span>
+                                <span class="node-crown">👑</span>
+                                <div class="node-pulse-ring"></div>
+                            </button>
+                            <span class="node-label">Nạp 15 Từ Đầu</span>
+                        </div>
+
+                        <div class="path-node-row pos-right">
+                            <button class="path-bubble-node node-unlocked" data-action="open-quiz" title="Chặng 2: Đấu Trường Quiz Blitz">
+                                <span class="node-icon"><img src="assets/icons/badge_blitz.svg" class="node-svg" alt="Quiz Blitz"></span>
+                            </button>
+                            <span class="node-label">Phản Xạ 10s</span>
+                        </div>
+
+                        <div class="path-node-row pos-left">
+                            <button class="path-chest-node" data-action="claim-chest" title="Rương phần thưởng">
+                                <span class="chest-icon"><img src="assets/icons/chest.svg" class="node-svg" alt="Rương Báu"></span>
+                            </button>
+                            <span class="node-label">Rương Coin</span>
+                        </div>
+
+                        <div class="path-node-row pos-center">
+                            <button class="path-bubble-node node-unlocked" data-action="open-writing" title="Chặng 3: Luyện Dịch Task 2">
+                                <span class="node-icon"><img src="assets/icons/badge_writing.svg" class="node-svg" alt="Writing"></span>
+                            </button>
+                            <span class="node-label">Dịch Task 2</span>
+                        </div>
+
+                        <div class="path-node-row pos-right">
+                            <button class="path-bubble-node node-trophy" data-action="open-exam" title="Chặng 4: Đề Thi Thật Cam 21">
+                                <span class="node-icon"><img src="assets/icons/badge_trophy.svg" class="node-svg" alt="Cam 21"></span>
+                            </button>
+                            <span class="node-label">Thử Thách Cam 21</span>
+                        </div>
+                    </div>
+
+                    <!-- UNIT 2 (LOCKED) -->
+                    <div class="path-unit-card unit-locked">
+                        <div class="unit-banner-head">
+                            <div>
+                                <span class="unit-sub">CHẶNG 2 • CAMBRIDGE 21</span>
+                                <h2 class="unit-title">Why We Need Silence & Nghệ Thuật Paraphrase</h2>
+                            </div>
+                            <span class="unit-badge">🔒 Khóa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar: Large Mascot & Daily Quota -->
+                <aside class="roadmap-sidebar">
+                    <div class="mascot-companion-card">
+                        <img class="companion-avatar" id="cabi-companion-avatar" src="assets/mascot/cabi_01_idle.svg" alt="Cabi Mascot">
+                        <div class="companion-speech" id="cabi-companion-speech">Chào sĩ tử! Cùng tớ tích lũy chuỗi streak và chinh phục Band 7.5+ hôm nay nhé!</div>
+                        <button class="btn-3d btn-3d-green w-full" id="sidebar-quick-play-btn">BẮT ĐẦU HỌC NGAY</button>
+                    </div>
+
+                    <div class="daily-quest-card">
+                        <h3 class="quest-title">Nhiệm Vụ Hôm Nay</h3>
+                        <div class="quest-item">
+                            <div class="quest-meta"><span>Hoàn thành 1 lượt Quiz Blitz</span><span id="quest-quiz-prog">0/1</span></div>
+                            <div class="duo-progress-bar"><div class="duo-bar-fill" style="width: 20%;"></div></div>
+                        </div>
+                        <div class="quest-item">
+                            <div class="quest-meta"><span>Ôn 10 Thẻ Flashcard 3D</span><span id="quest-fc-prog">5/10</span></div>
+                            <div class="duo-progress-bar"><div class="duo-bar-fill" style="width: 50%;"></div></div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- VIEW 2: FLASHCARD 3D STUDIO -->
+        <section class="view-panel" id="view-flashcard">
+            <div class="duo-lesson-header">
+                <button class="duo-back-btn" data-action="back-to-roadmap">✕</button>
+                <div class="duo-progress-bar-wrap">
+                    <div class="duo-progress-bar-inner" id="fc-progress-fill" style="width: 15%;"></div>
+                </div>
+                <div class="fc-tools-right">
+                    <button class="duo-pill-btn" id="fc-toggle-dir-btn">Anh ➔ Việt</button>
+                    <button class="duo-pill-btn" id="fc-speak-btn">🔊 Đọc</button>
+                </div>
+            </div>
+
+            <div class="flashcard-lesson-stage">
+                <div class="flashcard-3d-scene">
+                    <div class="flashcard-3d-card" id="flashcard-3d-card">
+                        <!-- FRONT -->
+                        <div class="card-face card-front">
+                            <div class="face-top"><span class="badge-pill" id="fc-front-score-badge">Điểm nhớ: 1.0</span><span class="pos-badge" id="fc-front-pos">[v]</span></div>
+                            <div class="face-center">
+                                <h1 class="main-term" id="fc-front-word">abandon</h1>
+                                <div class="term-ipa" id="fc-front-ipa">/əˈbændən/</div>
+                                <div class="clue-tag" id="fc-front-clue">Collocation: abandon hope / an attempt</div>
+                            </div>
+                            <div class="face-foot">Bấm Space hoặc chạm để lật mặt sau ↷</div>
+                        </div>
+                        <!-- BACK -->
+                        <div class="card-face card-back">
+                            <h2 class="back-term" id="fc-back-word">abandon</h2>
+                            <div class="back-meaning" id="fc-back-meaning">từ bỏ hoàn toàn, bỏ rơi</div>
+                            <div class="back-chunk-box">
+                                <div><strong>Collocation:</strong> <span id="fc-back-colloc">abandon hope / an attempt</span></div>
+                                <div><strong>Gốc từ Lego:</strong> <span id="fc-back-roots">a- + bandon</span></div>
+                                <div><strong>Ví dụ Cam 21:</strong> <span id="fc-back-example">They abandoned the mining project.</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rating-ribbon-3d">
+                    <span class="ribbon-label" style="font-size: 13px; font-weight: 800; color: #94a3b8;">Đánh giá phản xạ từ vựng:</span>
+                    <div class="rating-buttons-row" style="display: flex; gap: 12px; margin: 12px 0;">
+                        <button class="btn-3d btn-3d-red btn-rate" id="fc-btn-learning" data-score="1" style="flex: 1; padding: 14px 18px; font-size: 15px; font-weight: 800; border-radius: 14px;">
+                            🔴 CẦN HỌC (Phím 1)
+                        </button>
+                        <button class="btn-3d btn-3d-emerald btn-rate" id="fc-btn-known" data-score="6" style="flex: 1; padding: 14px 18px; font-size: 15px; font-weight: 800; border-radius: 14px;">
+                            🟢 ĐÃ BIẾT (Phím 2)
+                        </button>
+                    </div>
+                    <div class="fc-nav-controls">
+                        <button class="btn-3d btn-3d-gray" id="fc-prev-btn">← Thẻ Trước</button>
+                        <button class="btn-3d btn-3d-blue" id="fc-flip-btn">Lật Thẻ (Space)</button>
+                        <button class="btn-3d btn-3d-green" id="fc-next-btn">Thẻ Tiếp →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: QUIZ BLITZ ARENA (DUOLINGO LESSON STYLE) -->
+        <section class="view-panel" id="view-quiz">
+            <div class="duo-lesson-header">
+                <button class="duo-back-btn" data-action="back-to-roadmap">✕</button>
+                <div class="duo-progress-bar-wrap">
+                    <div class="duo-progress-bar-inner" id="quiz-progress-bar-fill" style="width: 10%;"></div>
+                </div>
+                <div class="quiz-timer-counter" id="quiz-timer-text">10s</div>
+            </div>
+
+            <div class="quiz-lesson-stage">
+                <div id="quiz-loading-state" class="quiz-loading-card">Đang tạo 10 câu hỏi phản xạ...</div>
+                
+                <div id="quiz-active-arena" class="quiz-lesson-content" style="display:none;">
+                    <div class="quiz-question-character-row">
+                        <img class="quiz-mascot-speech-avatar" id="quiz-character-avatar" src="assets/mascot/cabi_02_chamhoc.svg" alt="Cabi">
+                        <div class="quiz-speech-balloon">
+                            <span class="quiz-badge-tiny" id="quiz-type-badge">ANH ➔ VIỆT</span>
+                            <h2 class="quiz-prompt-text" id="quiz-question-prompt">Nghĩa của từ này là gì?</h2>
+                        </div>
+                    </div>
+
+                    <div class="duo-word-tiles-grid" id="quiz-options-grid"></div>
+                </div>
+
+                <div id="quiz-summary-card" class="duo-summary-card" style="display:none;">
+                    <div class="summary-mascot-celebrate">
+                        <img src="assets/mascot/cabi_05_anmung.svg" alt="Celebrate" style="width:110px;">
+                    </div>
+                    <h2 class="summary-heading">Bài Học Hoàn Tất!</h2>
+                    <div class="summary-score-pills">
+                        <div class="score-box"><span class="box-num" id="quiz-summary-score">10/10</span><span class="box-lbl">CHÍNH XÁC</span></div>
+                        <div class="score-box"><span class="box-num" id="quiz-summary-streak">x10</span><span class="box-lbl">MAX STREAK</span></div>
+                    </div>
+                    <button class="btn-3d btn-3d-green w-full" id="quiz-replay-btn">LUYỆN TẬP TIẾP</button>
+                </div>
+            </div>
+
+            <!-- DUOLINGO SLIDE-UP DRAWER (FEEDBACK SHEET) -->
+            <div class="duo-feedback-drawer" id="quiz-feedback-drawer">
+                <div class="drawer-inner">
+                    <div class="drawer-status-group">
+                        <span class="status-big-icon" id="drawer-icon">✓</span>
+                        <div>
+                            <h3 class="status-title" id="drawer-title">Chính xác!</h3>
+                            <p class="status-explanation" id="drawer-explanation">Giải thích câu hỏi...</p>
+                        </div>
+                    </div>
+                    <button class="btn-3d btn-drawer-action" id="drawer-continue-btn">TIẾP TỤC</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: READING-TO-WRITING STUDIO -->
+        <section class="view-panel" id="view-writing">
+            <div class="writing-studio-header">
+                <h2>✍️ Reading-to-Writing Task 2: Chuyển Hóa Từ Vựng Sang Điểm Viết</h2>
+                <div class="chunk-selector-pills" id="chunk-selector-group">
+                    <button class="pill-btn active" data-chunk="chunk_01">Chặng 1: Xã hội</button>
+                    <button class="pill-btn" data-chunk="chunk_02">Chặng 2: Tài chính</button>
+                    <button class="pill-btn" data-chunk="chunk_03">Chặng 3: Công nghệ</button>
+                    <button class="pill-btn" data-chunk="chunk_04">Chặng 4: Gắn kết</button>
+                </div>
+            </div>
+            <div class="writing-split-grid">
+                <div class="writing-prompt-card">
+                    <span class="chunk-badge-pill" id="chunk-badge">Micro-Chunk 01</span>
+                    <h3 class="chunk-heading" id="chunk-title">Xã hội đương đại & Giáo dục</h3>
+                    <div class="chips-box"><div class="chips-title">Từ vựng mục tiêu bắt buộc:</div><div id="target-chips-container"></div></div>
+                    <div class="vietnamese-box"><div class="vn-badge">Câu tiếng Việt chuẩn Task 2:</div><p id="chunk-vietnamese-text">...</p></div>
+                    <div class="clues-box"><div class="clues-badge">Gợi ý viên gạch rời:</div><div id="chunk-clues-pills"></div></div>
+                </div>
+                <div class="writing-input-card">
+                    <div class="input-head"><span>Bản dịch của bạn:</span><span id="writing-word-counter">0 words</span></div>
+                    <textarea class="duo-textarea" id="student-writing-input" placeholder="Lắp ráp các từ vựng mục tiêu ở trên thành câu phức học thuật..."></textarea>
+                    <button class="btn-3d btn-3d-blue w-full" id="evaluate-writing-btn">CHẤM & NÂNG CẤP BAND 7.5+ / 8.5+</button>
+                    <div class="writing-feedback-box" id="writing-feedback-container" style="display:none;">
+                        <div class="feedback-msg-banner" id="feedback-msg">...</div>
+                        <div class="band-compare-grid">
+                            <div class="band-card band-75"><div class="band-tag">Bản Mẫu Band 7.5+</div><p id="text-model-75">...</p></div>
+                            <div class="band-card band-85"><div class="band-tag">Bản Mẫu Band 8.5+</div><p id="text-model-85">...</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: CAMBRIDGE 21 READING SIMULATOR -->
+        <section class="view-panel" id="view-exam">
+            <div class="exam-header-bar">
+                <div class="passage-tabs" id="passage-selector-group">
+                    <button class="pass-tab active" data-pid="t1_p1">T1-P1 (Davies Sisters)</button>
+                    <button class="pass-tab" data-pid="t1_p2">T1-P2 (Silence)</button>
+                    <button class="pass-tab" data-pid="t1_p3">T1-P3 (Sugar)</button>
+                    <button class="pass-tab" data-pid="t2_p1">T2-P1 (Animals)</button>
+                    <button class="pass-tab" data-pid="t2_p3">T2-P3 (AI)</button>
+                </div>
+                <div class="exam-clock"><span id="exam-timer-display">20:00</span><button class="btn-3d btn-3d-gray" id="exam-timer-toggle-btn">Start</button></div>
+            </div>
+            <div class="exam-workspace-split">
+                <div class="passage-scroll"><h2 id="passage-display-title">...</h2><div id="passage-display-subtitle"></div><div id="passage-text-container"></div></div>
+                <div class="questions-scroll">
+                    <div id="questions-list-container"></div>
+                    <div class="duo-sheet-card">
+                        <div class="sheet-title">Candidate Answer Sheet</div>
+                        <div class="sheet-grid" id="sheet-inputs-grid"></div>
+                        <div class="sheet-actions"><button class="btn-3d btn-3d-green" id="submit-exam-btn">NỘP BÀI CHẤM ĐIỂM</button><button class="btn-3d btn-3d-gray" id="clear-exam-btn">Xóa</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 6: MASTER 450 LEXICON -->
+        <section class="view-panel" id="view-vocab">
+            <div class="vocab-filter-row">
+                <input type="text" class="duo-search-input" id="vocab-search-input" placeholder="Tìm 450 từ học thuật AWL & B2-C1...">
+                <select class="duo-select" id="vocab-pos-select">
+                    <option value="">Tất cả Từ loại</option><option value="v">Verb</option><option value="n">Noun</option><option value="adj">Adj</option><option value="adv">Adv</option>
+                </select>
+                <span class="vocab-count" id="vocab-count-indicator">450 Words</span>
+            </div>
+            <div class="vocab-cards-grid" id="vocab-cards-grid"></div>
+        </section>
+
+        <!-- VIEW 7: TRAP ANALYTICS & PDFS -->
+        <section class="view-panel" id="view-analytics">
+            <div class="analytics-row">
+                <div class="analytics-card"><h3>Bẫy Đề Thi Cam 21 (Trap Radar)</h3><div id="traps-breakdown-list"></div></div>
+                <div class="analytics-card"><h3>Thang Điểm Ghi Nhớ (0.0 – 7.0)</h3><div id="tiers-breakdown-container"></div></div>
+                <div class="analytics-card full-width"><h3>Tải Đề Thi & Cẩm Nang PDF Chuẩn A4</h3><div class="pdf-grid" id="pdf-downloads-grid"></div></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ONBOARDING & DIAGNOSTIC PLACEMENT MODAL -->
+    <div class="auth-modal-overlay" id="onboarding-modal" style="display:none;">
+        <div class="onboarding-dialog" id="onboarding-dialog-inner">
+            <!-- Dynamically populated by placement_manager.js -->
+        </div>
+    </div>
+
+    <!-- RESULT & VOCAB MODALS -->
+    <div class="modal-overlay" id="exam-result-modal" style="display:none;"><div class="modal-dialog"><div class="modal-header"><h3>Kết Quả Bài Thi</h3><button class="close-x" id="modal-close-btn">&times;</button></div><div id="modal-result-body"></div></div></div>
+    <div class="modal-overlay" id="vocab-detail-modal" style="display:none;"><div class="modal-dialog"><div class="modal-header"><h3 id="vocab-modal-title">Chi Tiết Từ Vựng</h3><button class="close-x" id="vocab-modal-close-btn">&times;</button></div><div id="vocab-modal-body"></div></div></div>
+    <script src="js/sound_manager.js"></script>
+    <script src="js/mascot_manager.js"></script>
+    <script src="js/local_store.js"></script>
+    <script src="js/auth_manager.js"></script>
+    <script src="js/placement_manager.js"></script>
+    <script src="js/energy_manager.js"></script>
+    <script src="js/progression_manager.js"></script>
+    <script src="js/flashcard_studio.js"></script>
+    <script src="js/quiz_blitz.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
