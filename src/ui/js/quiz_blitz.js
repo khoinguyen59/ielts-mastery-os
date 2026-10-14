@@ -30,6 +30,14 @@ class QuizBlitz {
         });
 
         window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                this.closeReportModal();
+                return;
+            }
+            const modal = document.getElementById("quiz-report-modal");
+            if (modal && modal.style.display !== "none" && modal.style.display !== "") return;
+            if (e.target && ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+
             const activeArena = document.getElementById("quiz-active-arena");
             if (!activeArena || activeArena.style.display === "none") return;
 
@@ -107,6 +115,10 @@ class QuizBlitz {
             const pct = Math.round(((this.currentIndex) / this.questions.length) * 100);
             progressFill.style.width = `${pct}%`;
         }
+
+        const badgeElem = document.getElementById("quiz-type-badge");
+        const promptElem = document.getElementById("quiz-question-prompt");
+        const optionsContainer = document.getElementById("quiz-options-grid");
 
         if (badgeElem) {
             badgeElem.textContent = (q.badge && q.badge !== 'Anh -> Việt' && q.badge !== 'ANH ➔ VIỆT')
@@ -233,10 +245,20 @@ class QuizBlitz {
         if (drawerExp) drawerExp.textContent = explanation || "";
 
         if (upgradesContainer) {
-            if (band75 || band85) {
+            const has75 = Boolean(band75 && band75.trim());
+            const has85 = Boolean(band85 && band85.trim());
+            if (has75 || has85) {
                 upgradesContainer.style.display = "flex";
-                if (u75) u75.textContent = band75 || "";
-                if (u85) u85.textContent = band85 || "";
+                if (u75) {
+                    u75.textContent = band75 || "";
+                    const item75 = u75.closest ? u75.closest('.drawer-upgrade-item') : null;
+                    if (item75) item75.style.display = has75 ? "flex" : "none";
+                }
+                if (u85) {
+                    u85.textContent = band85 || "";
+                    const item85 = u85.closest ? u85.closest('.drawer-upgrade-item') : null;
+                    if (item85) item85.style.display = has85 ? "flex" : "none";
+                }
             } else {
                 upgradesContainer.style.display = "none";
             }
@@ -284,8 +306,10 @@ class QuizBlitz {
         const modal = document.getElementById("quiz-report-modal");
         const msg = document.getElementById("report-status-msg");
         const detailsInput = document.getElementById("report-details-input");
+        const reasonSelect = document.getElementById("report-reason-select");
         const submitBtn = document.getElementById("quiz-report-submit-btn");
 
+        if (reasonSelect) reasonSelect.value = "grammar_typo";
         if (msg) {
             msg.style.display = "none";
             msg.textContent = "";
