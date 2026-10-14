@@ -121,6 +121,16 @@ CREATE TABLE IF NOT EXISTS user_lesson_progress (
   UNIQUE(user_id, unit_id, node_index)
 );
 
+CREATE TABLE IF NOT EXISTS confused_word_pairs (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_word_id TEXT NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+  confused_word_id TEXT NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+  count INTEGER DEFAULT 1,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, target_word_id, confused_word_id)
+);
+
 -- Optimized Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_words_word ON words(word);
 CREATE INDEX IF NOT EXISTS idx_questions_target ON questions(target_word_id, status);
@@ -133,3 +143,5 @@ CREATE INDEX IF NOT EXISTS idx_exam_sub_user ON exam_submissions(user_id, passag
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(token);
 CREATE INDEX IF NOT EXISTS idx_user_lesson_progress ON user_lesson_progress(user_id, unit_id);
+CREATE INDEX IF NOT EXISTS idx_confused_user_target ON confused_word_pairs(user_id, target_word_id);
+

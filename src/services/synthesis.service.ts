@@ -2,7 +2,7 @@ import { getDatabase } from '../db/sqlite.js';
 import { QuestionDTO } from '../types/question.types.js';
 import { vocabService } from './vocab.service.js';
 import { fsrsService } from './fsrs.service.js';
-import { aiBridgeService } from './ai-bridge.service.js';
+import { expansionService } from './expansion.service.js';
 
 export class SynthesisService {
   private db = getDatabase();
@@ -14,70 +14,78 @@ export class SynthesisService {
     levelKey: string = 'intermediate'
   ): QuestionDTO[] {
     const startTime = performance.now();
-    const learnedIds = new Set(fsrsService.getLearnedWordIds(2.0));
-    const allWords = vocabService.getAll();
-    const levelWords = vocabService.getByLevel(levelKey);
+    // Rule i + 1: Learned background words must have memory score >= 3.0
+    const learnedIds = new Set(fsrsService.getLearnedWordIds(3.0, userId));
+    const allWords = vocabService.getAll(userId);
+    const levelWords = vocabService.getByLevel(levelKey, userId);
     const targetPool = levelWords.length > 0 ? levelWords : allWords;
+    const wordsMap = new Map(allWords.map(w => [w.id, w]));
     const questions: QuestionDTO[] = [];
 
-    // Query recent weak words (mistakes & 'cần học' ratings) for real-time adaptation
-    let recentWeakWords: any[] = [];
-    try {
-      const weakRows = this.db.prepare(`
-        SELECT word_id FROM user_vocab_progress
-        WHERE current_score < 3.0 OR lapses > 0
-        ORDER BY updated_at DESC, current_score ASC
-        LIMIT ?
-      `).all(count) as any[];
-      for (const row of weakRows) {
-        const w = vocabService.getById(row.word_id);
-        if (w) recentWeakWords.push(w);
-      }
-    } catch {
-      recentWeakWords = [];
-    }
-
-    // Determine target words with priority: (1) targetWordId, (2) recent weak words, (3) due words in level, (4) level pool
-    let targetWords: any[] = [];
-    if (targetWordId) {
-      const specifiedWord = vocabService.getById(targetWordId);
-      if (specifiedWord) targetWords.push(specifiedWord);
-    }
-
-    // Inject recent mistakes into the next round
-    for (const weak of recentWeakWords) {
-      if (!targetWords.some(t => t.id === weak.id)) targetWords.push(weak);
-      if (targetWords.length >= count) break;
-    }
-
-    if (targetWords.length < count) {
-      const fillers = vocabService.getDueWords(count);
-      for (const f of fillers) {
-        if (!targetWords.some(t => t.id === f.id)) targetWords.push(f);
-        if (targetWords.length >= count) break;
-      }
-    }
-
-    if (targetWords.length < count) {
-      for (const w of targetPool) {
-        if (!targetWords.some(t => t.id === w.id)) targetWords.push(w);
-        if (targetWords.length >= count) break;
-      }
-    }
-
-    for (const tw of targetWords) {
-      if (!tw) continue;
-      // 1. Try finding pre-seeded or verified question in SQLite
-      const existing = this.findMatchingQuestion(tw.id, learnedIds);
-      if (existing) {
-        questions.push(existing);
-      } else {
-        // 2. Fallback: Deterministic Cloze Synthesizer (< 0.2ms)
-        const synthesized = this.synthesizeClozeQuestion(tw, learnedIds, allWords);
-        questions.push(synthesized);
-      }
-
+    // Query confused word pairs for remediation
+    const confusedPairs = expansionService.getRecentConfusedPairs(userId, Math.min(3, count));
+    for (const cp of confusedPairs) {
       if (questions.length >= count) break;
+      const tw = vocabService.getById(cp.target_word_id, userId);
+      const cw = vocabService.getById(cp.confused_word_id, userId);
+      if (tw && cw) {
+        const cq = expansionService.buildConfusedPairQuestion(tw, cw, allWords);
+        this.persistQuestion(cq);
+        questions.push(cq);
+      }
+    }
+
+    // Step 3: Chain Expansion for remaining slots if count >= 3
+    const remainingCount = count - questions.length;
+    if (remainingCount >= 3) {
+      const numChains = Math.floor(remainingCount / 3);
+      for (let c = 0; c < numChains; c++) {
+        let chainTarget = targetWordId ? vocabService.getById(targetWordId, userId) : null;
+        if (!chainTarget) {
+          const dueList = vocabService.getDueWords(10, userId);
+          chainTarget = dueList.find(d => !questions.some(q => q.target_word_id === d.id)) || null;
+        }
+        if (!chainTarget) {
+          chainTarget = targetPool.find(p => !questions.some(q => q.target_word_id === p.id)) || allWords[0];
+        }
+
+        if (chainTarget) {
+          const thematicCandidates = expansionService.getThematicLearnedWords(chainTarget, new Set(allWords.map(w => w.id)), allWords);
+          const wB = thematicCandidates[0] || allWords.find(w => w.id !== chainTarget!.id) || allWords[1];
+          const wC = thematicCandidates[1] || allWords.find(w => w.id !== chainTarget!.id && w.id !== wB.id) || allWords[2];
+
+          const chainQs = expansionService.buildChainQuestions([chainTarget, wB, wC], c + 1, allWords);
+          for (const q of chainQs) {
+            this.persistQuestion(q);
+            questions.push(q);
+            if (questions.length >= count) break;
+          }
+        }
+      }
+    }
+
+    // Fill any remaining questions with adaptive morphing / verified questions
+    if (questions.length < count) {
+      const candidates = [...targetPool, ...allWords];
+      for (const tw of candidates) {
+        if (questions.some(q => q.target_word_id === tw.id)) continue;
+
+        const existing = this.findMatchingQuestion(tw.id, learnedIds);
+        if (existing) {
+          if (!existing.word_details) {
+            existing.word_details = expansionService.buildWordWebDetails(tw, existing.embedded_word_ids || [], wordsMap);
+          }
+          questions.push(existing);
+        } else {
+          const curScore = tw.score !== undefined ? tw.score : 1.0;
+          const chosenLearned = expansionService.getThematicLearnedWords(tw, learnedIds, allWords);
+          const morphed = expansionService.morphQuestionByScore(tw, curScore, chosenLearned, allWords);
+          this.persistQuestion(morphed);
+          questions.push(morphed);
+        }
+
+        if (questions.length >= count) break;
+      }
     }
 
     const duration = performance.now() - startTime;
@@ -85,7 +93,7 @@ export class SynthesisService {
       console.warn(`[SynthesisService] Round generated in ${duration.toFixed(2)}ms`);
     }
 
-    return questions;
+    return questions.slice(0, count);
   }
 
   public findMatchingQuestion(targetWordId: string, learnedIds: Set<string>): QuestionDTO | null {
@@ -115,6 +123,11 @@ export class SynthesisService {
         embedded = [];
       }
 
+      // Strict Comprehensible Input i + 1:
+      // Maximum 2 embedded background words, and 0 unlearned words
+      if (embedded.length > 2) continue;
+      if (embedded.some(id => !learnedIds.has(id))) continue;
+
       if (embedded.length === 0) {
         if (bestMatchScore < 0) {
           bestMatch = c;
@@ -123,32 +136,20 @@ export class SynthesisService {
         continue;
       }
 
-      const knownCount = embedded.filter(id => learnedIds.has(id)).length;
-      const coverage = knownCount / embedded.length;
-      if (coverage >= 0.5 && coverage > bestMatchScore) {
+      // Valid match with known background words
+      const coverage = embedded.length / 2;
+      if (coverage > bestMatchScore) {
         bestMatch = c;
         bestMatchScore = coverage;
       }
     }
 
-    if (bestMatch) {
-      return this.mapRowToQuestion(bestMatch);
-    }
-
-    if (learnedIds.size > 0) {
-      return null;
-    }
-
-    return this.mapRowToQuestion(candidates[0]);
+    return bestMatch ? this.mapRowToQuestion(bestMatch) : null;
   }
 
   public synthesizeClozeQuestion(target: any, learnedIds: Set<string>, allWords: any[]): QuestionDTO {
-    const learnedCandidates = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
-    for (let i = learnedCandidates.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [learnedCandidates[i], learnedCandidates[j]] = [learnedCandidates[j], learnedCandidates[i]];
-    }
-    const chosenLearned = learnedCandidates.slice(0, 2);
+    // Thematic clustering for learned background words (Golden ratio: 1-2 words)
+    const chosenLearned = expansionService.getThematicLearnedWords(target, learnedIds, allWords);
 
     const baseExample = target.example || `Scholars have observed that measures to apply ${target.word} remain vital.`;
     const regex = new RegExp(`\\b${target.word}\\b`, 'gi');
@@ -169,7 +170,7 @@ export class SynthesisService {
       masked = `${contextPrefix}${masked.charAt(0).toLowerCase() + masked.slice(1)}`;
     }
 
-    // Distractors: shuffle candidates using Fisher-Yates before slicing
+    // Distractors
     const candidateDistractors = allWords.filter(
       w => w.id !== target.id && (w.pos === target.pos || !w.pos)
     );
@@ -179,7 +180,6 @@ export class SynthesisService {
     }
     const distractors = candidateDistractors.slice(0, 3);
 
-    // Fallback if less than 3 distractors of same POS
     if (distractors.length < 3) {
       const fallbackPool = allWords.filter(
         w => w.id !== target.id && !distractors.some(d => d.id === w.id)
@@ -193,17 +193,12 @@ export class SynthesisService {
 
     const options = [target.word, ...distractors.map(d => d.word)];
     const correctIdx = Math.floor(Math.random() * 4);
-    // Swap target.word to correctIdx
     options[0] = options[correctIdx];
     options[correctIdx] = target.word;
 
-    // Pre-validation: ensure 4 unique options and valid index
     const uniqueOptions = new Set(options.map(o => (o || '').trim().toLowerCase()));
     const isStructureValid = options.length === 4 && uniqueOptions.size === 4 && correctIdx >= 0 && correctIdx <= 3;
     const initialStatus: 'active' | 'rejected' = isStructureValid ? 'active' : 'rejected';
-
-    const errorTags = ['[LỖI-COLLOCATION-CLASH]', '[LỖI-SẮC-THÁI-HỌC-THUẬT]', '[LỖI-PARAPHRASE]'];
-    const errorTag = errorTags[Math.floor(Math.random() * errorTags.length)];
 
     const newQ: QuestionDTO = {
       id: `synth_${target.id}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -215,71 +210,18 @@ export class SynthesisService {
       options,
       correct_index: correctIdx,
       explanation: `'${target.word}' (${target.pos}) có nghĩa là: ${target.meaning}.`,
-      error_tag: errorTag,
+      error_tag: '[LỖI-COLLOCATION-CLASH]',
+      badge: 'Bậc 2: Cụm Collocation Cố định',
+      morph_stage: 2,
       band_75_upgrade: `Furthermore, policymakers should actively ${target.word} key protocols to safeguard outcomes.`,
       band_85_upgrade: `Consequently, it is imperative to rigorously ${target.word} structural systemic frameworks.`,
       status: initialStatus,
-      quality_tags: isStructureValid ? ['deterministic_cloze', 'v1_approved'] : ['under_review_v1']
+      quality_tags: isStructureValid ? ['deterministic_cloze', 'v1_approved'] : ['under_review_v1'],
+      word_details: expansionService.buildWordWebDetails(target, chosenLearned.map(w => w.id), new Map(allWords.map(w => [w.id, w])))
     };
 
     this.persistQuestion(newQ);
-
-    // Pre-validation call to AI Bridge (async verification)
-    aiBridgeService.validateQuestion(
-      {
-        prompt: newQ.prompt,
-        options: newQ.options,
-        correct_index: newQ.correct_index
-      },
-      'ai_v1'
-    ).then(valResult => {
-      if (!valResult.valid && newQ.status === 'active') {
-        try {
-          this.db.prepare("UPDATE questions SET status = 'under_review_v1' WHERE id = ?").run(newQ.id);
-        } catch {}
-      }
-    }).catch(() => {});
-
     return newQ;
-  }
-
-  public async generateAIQuestionWithRetry(target: any, learnedIds: Set<string>, allWords: any[]): Promise<QuestionDTO | null> {
-    const candidateLearned = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
-    const candidateDistractors = allWords.filter(w => w.id !== target.id && (w.pos === target.pos || !w.pos)).map(w => w.word);
-
-    let attempts = 0;
-    while (attempts < 3) {
-      attempts++;
-      const aiGen = await aiBridgeService.generateQuestion(target, candidateLearned, candidateDistractors);
-      if (!aiGen) continue;
-
-      const val = await aiBridgeService.validateQuestion(
-        { prompt: aiGen.prompt, options: aiGen.options, correct_index: aiGen.correct_index },
-        'ai_v1'
-      );
-
-      if (val.valid) {
-        const q: QuestionDTO = {
-          id: `ai_${target.id}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-          target_word_id: target.id,
-          target_word: target.word,
-          embedded_word_ids: aiGen.embedded_word_ids || [],
-          prompt: aiGen.prompt,
-          masked_sentence: aiGen.masked_sentence,
-          options: aiGen.options,
-          correct_index: aiGen.correct_index,
-          explanation: aiGen.explanation,
-          error_tag: aiGen.error_tag,
-          band_75_upgrade: aiGen.band_75_upgrade,
-          band_85_upgrade: aiGen.band_85_upgrade,
-          status: 'active',
-          quality_tags: ['ai_generated', 'v1_approved']
-        };
-        this.persistQuestion(q);
-        return q;
-      }
-    }
-    return null;
   }
 
   public persistQuestion(q: QuestionDTO): void {
@@ -292,13 +234,13 @@ export class SynthesisService {
         q.target_word_id,
         JSON.stringify(q.embedded_word_ids),
         q.prompt,
-        q.masked_sentence,
+        q.masked_sentence || '',
         JSON.stringify(q.options),
         q.correct_index,
         q.explanation,
-        q.error_tag,
-        q.band_75_upgrade,
-        q.band_85_upgrade,
+        q.error_tag || null,
+        q.band_75_upgrade || null,
+        q.band_85_upgrade || null,
         q.status,
         JSON.stringify(q.quality_tags)
       );
@@ -310,27 +252,16 @@ export class SynthesisService {
     let options: string[] = [];
     let qualityTags: string[] = [];
 
-    try {
-      embedded = JSON.parse(row.embedded_word_ids || '[]');
-    } catch {
-      embedded = [];
-    }
+    try { embedded = JSON.parse(row.embedded_word_ids || '[]'); } catch { embedded = []; }
+    try { options = JSON.parse(row.options || '[]'); } catch { options = []; }
+    try { qualityTags = JSON.parse(row.quality_tags || '[]'); } catch { qualityTags = []; }
 
-    try {
-      options = JSON.parse(row.options || '[]');
-    } catch {
-      options = [];
-    }
-
-    try {
-      qualityTags = JSON.parse(row.quality_tags || '[]');
-    } catch {
-      qualityTags = [];
-    }
+    const targetRow = this.db.prepare('SELECT word FROM words WHERE id = ?').get(row.target_word_id) as { word: string } | undefined;
 
     return {
       id: row.id,
       target_word_id: row.target_word_id,
+      target_word: targetRow ? targetRow.word : undefined,
       embedded_word_ids: embedded,
       prompt: row.prompt,
       masked_sentence: row.masked_sentence || undefined,
@@ -338,6 +269,7 @@ export class SynthesisService {
       correct_index: row.correct_index,
       explanation: row.explanation || '',
       error_tag: row.error_tag || undefined,
+      badge: row.badge || 'Bậc 2: Cụm Collocation Cố định',
       band_75_upgrade: row.band_75_upgrade || undefined,
       band_85_upgrade: row.band_85_upgrade || undefined,
       status: row.status,

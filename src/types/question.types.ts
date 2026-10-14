@@ -24,6 +24,17 @@ export interface QuestionDTO {
   status: QuestionStatus;
   quality_tags: string[];
   created_at?: string;
+  badge?: string;
+  morph_stage?: number;
+  chain_id?: string;
+  chain_step?: number;
+  chain_badge?: string;
+  word_details?: {
+    collocation?: string;
+    paraphrase?: string;
+    derivatives?: string;
+    embedded_words?: Array<{ id?: string; word: string; meaning: string }>;
+  };
 }
 
 export const QuestionSchema = z.object({
@@ -47,5 +58,11 @@ export const QuestionSchema = z.object({
     'rejected',
     'archived'
   ]).default('active'),
-  quality_tags: z.array(z.string()).default([])
+  quality_tags: z.array(z.string()).default([]),
+  badge: z.string().optional(),
+  morph_stage: z.number().optional(),
+  chain_id: z.string().optional(),
+  chain_step: z.number().optional(),
+  chain_badge: z.string().optional(),
+  word_details: z.any().optional()
 });

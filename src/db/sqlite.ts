@@ -140,6 +140,19 @@ function runLiveMigrations(db: DatabaseType): void {
       ALTER TABLE user_stats_m2 RENAME TO user_stats;
     `);
   }
+
+  // 4. Ensure confused_word_pairs table exists for confused pair tracking
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS confused_word_pairs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      target_word_id TEXT NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+      confused_word_id TEXT NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+      count INTEGER DEFAULT 1,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, target_word_id, confused_word_id)
+    );
+  `);
 }
 
 export function getDatabase(dbPath?: string): DatabaseType {

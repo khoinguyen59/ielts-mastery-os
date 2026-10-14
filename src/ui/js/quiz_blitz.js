@@ -6,10 +6,7 @@ class QuizBlitz {
     constructor() {
         this.questions = [];
         this.mistakeQueue = [];
-        this.currentIndex = 0;
-        this.currentStreak = 0;
-        this.bestStreakInRound = 0;
-        this.correctCount = 0;
+        this.currentIndex = this.currentStreak = this.bestStreakInRound = this.correctCount = 0;
         this.timer = null;
         this.timeLeft = 10;
         this.isAnswered = false;
@@ -30,16 +27,12 @@ class QuizBlitz {
         });
 
         window.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-                this.closeReportModal();
-                return;
-            }
+            if (e.key === "Escape") { this.closeReportModal(); return; }
             const modal = document.getElementById("quiz-report-modal");
-            if (modal && modal.style.display !== "none" && modal.style.display !== "") return;
+            if (modal && modal.style.display && modal.style.display !== "none") return;
             if (e.target && ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
-
-            const activeArena = document.getElementById("quiz-active-arena");
-            if (!activeArena || activeArena.style.display === "none") return;
+            const arena = document.getElementById("quiz-active-arena");
+            if (!arena || arena.style.display === "none") return;
 
             if (!this.isAnswered && ["1", "2", "3", "4"].includes(e.key)) {
                 this.handleAnswer(parseInt(e.key) - 1);
@@ -56,13 +49,9 @@ class QuizBlitz {
             return;
         }
         if (window.energyManager && !window.energyManager.canStartLesson()) return;
-        this.currentIndex = 0;
-        this.currentStreak = 0;
-        this.bestStreakInRound = 0;
-        this.correctCount = 0;
+        this.currentIndex = this.currentStreak = this.bestStreakInRound = this.correctCount = this.initialTotalQuestions = 0;
         this.isAnswered = false;
         this.mistakeQueue = [];
-        this.initialTotalQuestions = 0;
         this.userId = localStorage.getItem('ielts_os_user_id') || 'default_user';
 
         const loading = document.getElementById("quiz-loading-state");
@@ -83,8 +72,7 @@ class QuizBlitz {
             if (loading) loading.style.display = "none";
             if (arena) arena.style.display = "block";
             this.renderQuestion();
-        } catch (e) {
-            console.error("Failed to load quiz round:", e);
+        } catch {
             if (loading) loading.textContent = "Lỗi nạp câu hỏi trắc nghiệm. Vui lòng thử lại!";
         }
     }
@@ -108,12 +96,9 @@ class QuizBlitz {
         this._closeDrawer();
 
         const q = this.questions[this.currentIndex];
-
-        // Progress bar
         const progressFill = document.getElementById("quiz-progress-bar-fill");
         if (progressFill && this.questions.length > 0) {
-            const pct = Math.round(((this.currentIndex) / this.questions.length) * 100);
-            progressFill.style.width = `${pct}%`;
+            progressFill.style.width = `${Math.round((this.currentIndex / this.questions.length) * 100)}%`;
         }
 
         const badgeElem = document.getElementById("quiz-type-badge");
@@ -121,11 +106,24 @@ class QuizBlitz {
         const optionsContainer = document.getElementById("quiz-options-grid");
 
         if (badgeElem) {
-            badgeElem.textContent = (q.badge && q.badge !== 'Anh -> Việt' && q.badge !== 'ANH ➔ VIỆT')
-                ? q.badge
-                : 'Điền từ học thuật';
+            const raw = q.chain_badge || q.badge;
+            badgeElem.textContent = (raw && raw !== 'Anh -> Việt' && raw !== 'ANH ➔ VIỆT') ? raw : 'Điền từ học thuật';
         }
-        if (promptElem) promptElem.textContent = q.prompt || "";
+
+        if (promptElem) {
+            let pText = q.prompt || "";
+            promptElem.textContent = pText;
+            const embList = q.word_details?.embedded_words || [];
+            if (embList.length > 0) {
+                embList.forEach(ew => {
+                    if (ew.word && ew.word.length > 2) {
+                        const re = new RegExp(`\\b(${ew.word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})\\b`, 'gi');
+                        pText = pText.replace(re, `<span class="highlight-embedded-word" title="${ew.meaning || ''}">$1</span>`);
+                    }
+                });
+                promptElem.innerHTML = pText;
+            }
+        }
 
         if (optionsContainer) {
             optionsContainer.innerHTML = "";
@@ -141,6 +139,7 @@ class QuizBlitz {
         }
 
         window.mascotManager?.reactStudy();
+        this.questionStartTime = Date.now();
         this._startCountdown();
     }
 
@@ -165,7 +164,6 @@ class QuizBlitz {
 
         const q = this.questions[this.currentIndex];
         const isCorrect = (chosenIndex === q.correct_index);
-
         const chosenBtn = document.getElementById(`quiz-opt-${chosenIndex}`);
         const correctBtn = document.getElementById(`quiz-opt-${q.correct_index}`);
 
@@ -173,7 +171,6 @@ class QuizBlitz {
             this.correctCount++;
             this.currentStreak++;
             if (this.currentStreak > this.bestStreakInRound) this.bestStreakInRound = this.currentStreak;
-
             if (chosenBtn) chosenBtn.classList.add("selected-correct");
             window.soundManager?.playCorrect();
             if (this.currentStreak % 5 === 0) window.soundManager?.playReward();
@@ -187,16 +184,15 @@ class QuizBlitz {
             if (chosenBtn) chosenBtn.classList.add("selected-wrong");
             if (correctBtn) correctBtn.classList.add("selected-correct");
             this.mistakeQueue.push(q);
-
             window.energyManager?.deductHeart();
             window.soundManager?.playWrong();
             window.mascotManager?.reactWrong(q.explanation);
             this._showDrawer(false, "Chưa chính xác rồi!", q.explanation, q.band_75_upgrade, q.band_85_upgrade);
         }
 
-        // Asynchronously sync with backend FSRS & user stats
         if (q && q.id) {
             const currentUserId = this.userId || localStorage.getItem('ielts_os_user_id') || 'default_user';
+            const responseTimeMs = Date.now() - (this.questionStartTime || Date.now());
             fetch('/api/quiz/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -204,7 +200,9 @@ class QuizBlitz {
                     question_id: q.id,
                     selected_index: chosenIndex,
                     target_word_id: q.word_id,
-                    user_id: currentUserId
+                    user_id: currentUserId,
+                    response_time_ms: responseTimeMs,
+                    time_left_seconds: this.timeLeft
                 })
             }).catch(() => {});
         }
@@ -214,12 +212,10 @@ class QuizBlitz {
         if (this.isAnswered) return;
         this.isAnswered = true;
         this.currentStreak = 0;
-
         const q = this.questions[this.currentIndex];
         const correctBtn = document.getElementById(`quiz-opt-${q.correct_index}`);
         if (correctBtn) correctBtn.classList.add("selected-correct");
         this.mistakeQueue.push(q);
-
         window.energyManager?.deductHeart();
         window.soundManager?.playWrong();
         window.mascotManager?.reactWrong("Hết thời gian!");
@@ -244,6 +240,12 @@ class QuizBlitz {
         if (drawerIcon) drawerIcon.textContent = isCorrect ? "✓" : "✕";
         if (drawerExp) drawerExp.textContent = explanation || "";
 
+        const hl = (txt, target) => {
+            if (!txt || !target) return txt || "";
+            const re = new RegExp(`\\b(${target.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})\\b`, 'gi');
+            return txt.replace(re, '<span class="highlight-target-word">$1</span>');
+        };
+
         if (upgradesContainer) {
             const has75 = Boolean(band75 && band75.trim());
             const has85 = Boolean(band85 && band85.trim());
@@ -251,16 +253,45 @@ class QuizBlitz {
                 upgradesContainer.style.display = "flex";
                 if (u75) {
                     u75.textContent = band75 || "";
-                    const item75 = u75.closest ? u75.closest('.drawer-upgrade-item') : null;
+                    if (q?.target_word) u75.innerHTML = hl(band75, q.target_word);
+                    const item75 = u75.closest?.('.drawer-upgrade-item');
                     if (item75) item75.style.display = has75 ? "flex" : "none";
                 }
                 if (u85) {
                     u85.textContent = band85 || "";
-                    const item85 = u85.closest ? u85.closest('.drawer-upgrade-item') : null;
+                    if (q?.target_word) u85.innerHTML = hl(band85, q.target_word);
+                    const item85 = u85.closest?.('.drawer-upgrade-item');
                     if (item85) item85.style.display = has85 ? "flex" : "none";
                 }
             } else {
                 upgradesContainer.style.display = "none";
+            }
+        }
+
+        const expCard = document.getElementById("drawer-expansion-card");
+        const embRow = document.getElementById("drawer-embedded-row");
+        const embChips = document.getElementById("drawer-embedded-chips");
+        const bCol = document.getElementById("drawer-branch-collocation");
+        const bPara = document.getElementById("drawer-branch-paraphrase");
+        const bDeriv = document.getElementById("drawer-branch-derivatives");
+        if (expCard) {
+            const details = q?.word_details;
+            if (details && (details.collocation || details.paraphrase || details.derivatives || (details.embedded_words && details.embedded_words.length > 0))) {
+                expCard.style.display = "block";
+                if (embRow && embChips) {
+                    const embList = details.embedded_words || [];
+                    if (embList.length > 0) {
+                        embRow.style.display = "flex";
+                        embChips.innerHTML = embList.map(ew => `<span class="embedded-chip" title="${ew.meaning || ''}">${ew.word}</span>`).join(" ");
+                    } else {
+                        embRow.style.display = "none";
+                    }
+                }
+                if (bCol) bCol.textContent = details.collocation || "N/A";
+                if (bPara) bPara.textContent = details.paraphrase || "N/A";
+                if (bDeriv) bDeriv.textContent = details.derivatives || "N/A";
+            } else {
+                expCard.style.display = "none";
             }
         }
     }
@@ -322,16 +353,13 @@ class QuizBlitz {
     }
 
     async submitQuestionReport() {
-        const qId = this.currentReportQuestionId || (this.questions[this.currentIndex] && this.questions[this.currentIndex].id);
+        const qId = this.currentReportQuestionId || (this.questions[this.currentIndex]?.id);
         if (!qId) return;
 
-        const reasonSelect = document.getElementById("report-reason-select");
-        const detailsInput = document.getElementById("report-details-input");
+        const reason = document.getElementById("report-reason-select")?.value || 'grammar_typo';
+        const details = document.getElementById("report-details-input")?.value?.trim() || '';
         const msg = document.getElementById("report-status-msg");
         const submitBtn = document.getElementById("quiz-report-submit-btn");
-
-        const reason = reasonSelect?.value || 'grammar_typo';
-        const details = detailsInput?.value?.trim() || '';
         const uid = this.userId || localStorage.getItem('ielts_os_user_id') || 'default_user';
 
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Đang gửi..."; }
@@ -350,7 +378,7 @@ class QuizBlitz {
                 if (msg) { msg.className = "report-status-msg report-status-error"; msg.textContent = "✕ " + (data.message || "Lỗi gửi báo cáo. Vui lòng thử lại!"); msg.style.display = "block"; }
                 if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Gửi Báo Lỗi"; }
             }
-        } catch (err) {
+        } catch {
             if (msg) { msg.className = "report-status-msg report-status-error"; msg.textContent = "✕ Không thể kết nối máy chủ!"; msg.style.display = "block"; }
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Gửi Báo Lỗi"; }
         }

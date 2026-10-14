@@ -53,7 +53,7 @@ export class FSRSService {
       ...baseCard,
       due: current.due_date ? new Date(current.due_date) : reviewDate,
       stability: current.stability || 0,
-      difficulty: current.difficulty || 0,
+      difficulty: current.difficulty || (current.stability && current.stability > 0 ? 4.0 : 0),
       elapsed_days: current.last_review ? Math.max(0, (reviewDate.getTime() - new Date(current.last_review).getTime()) / 86400000) : 0,
       scheduled_days: 0,
       reps: current.reps || 0,
