@@ -28,6 +28,7 @@ export interface VocabWord {
 }
 
 export interface FSRSProgress {
+  user_id?: string;
   word_id: string;
   stability: number;
   difficulty: number;

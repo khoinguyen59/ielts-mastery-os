@@ -30,6 +30,8 @@ export interface WritingEvaluationResponse {
   used_target_words: string[];
   missing_target_words: string[];
   coverage_ratio: number;
+  score_ratio: number;
+  similarity_score?: number;
   band_estimate: string;
   band_75_model: string;
   band_85_model: string;

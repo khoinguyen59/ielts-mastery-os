@@ -84,12 +84,19 @@
         if (!data) return;
 
         const matched = data.used_target_words || data.matched_words || [];
-        if ($('feedback-msg')) $('feedback-msg').textContent = `${data.feedback} • Khớp: ${matched.join(', ') || 'Chưa đủ'}`;
+        const ratio = typeof data.score_ratio === 'number'
+            ? (data.score_ratio > 1.0 ? data.score_ratio / 100 : data.score_ratio)
+            : (data.coverage_ratio ?? 0);
+        const pct = Math.round(ratio * 100);
+        const band = data.band_estimate || data.estimated_band || '6.5';
+
+        if ($('feedback-msg')) {
+            $('feedback-msg').textContent = `Điểm: ${pct}% (Band ${band}) • ${data.feedback} • Khớp: ${matched.join(', ') || 'Chưa đủ'}`;
+        }
         if ($('text-model-75')) $('text-model-75').textContent = `"${data.band_75_model}"`;
         if ($('text-model-85')) $('text-model-85').textContent = `"${data.band_85_model}"`;
         if ($('writing-feedback-container')) $('writing-feedback-container').style.display = 'block';
 
-        const ratio = data.coverage_ratio ?? (data.score_ratio ? data.score_ratio / 100 : 0);
         if (ratio >= 0.7) {
             window.soundManager?.playCorrect();
             window.mascotManager?.reactCorrect(1);

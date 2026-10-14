@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getDatabase } from '../../src/db/sqlite.js';
+import { getDatabase, ensureUserExists } from '../../src/db/sqlite.js';
 import crypto from 'crypto';
 
 // Dynamic top-level loader for AuthService to satisfy Progressive Testability
@@ -38,6 +38,8 @@ describe('R2: AuthService & Multi-Profile Management Tests', () => {
     it('verifies SQLite user_stats table supports multi-user storage', () => {
       const userA = 'test_auth_usr_a';
       const userB = 'test_auth_usr_b';
+      ensureUserExists(userA);
+      ensureUserExists(userB);
 
       db.prepare(`
         INSERT INTO user_stats (user_id, target_band, starting_band, coins, hearts)

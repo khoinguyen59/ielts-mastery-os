@@ -1,40 +1,41 @@
 import { getDatabase } from '../db/sqlite.js';
 import { VocabWord } from '../types/vocab.types.js';
+import { fsrsService } from './fsrs.service.js';
 
 export class VocabService {
   private db = getDatabase();
 
-  public getAll(): VocabWord[] {
+  public getAll(userId: string = 'default_user'): VocabWord[] {
     const rows = this.db.prepare(`
       SELECT w.*, p.current_score as score
       FROM words w
-      LEFT JOIN user_vocab_progress p ON w.id = p.word_id
+      LEFT JOIN user_vocab_progress p ON w.id = p.word_id AND p.user_id = ?
       ORDER BY w.id ASC
-    `).all() as any[];
+    `).all(userId) as any[];
 
     return rows.map(r => this.mapRowToWord(r));
   }
 
-  public getById(id: string): VocabWord | null {
+  public getById(id: string, userId: string = 'default_user'): VocabWord | null {
     const row = this.db.prepare(`
       SELECT w.*, p.current_score as score
       FROM words w
-      LEFT JOIN user_vocab_progress p ON w.id = p.word_id
+      LEFT JOIN user_vocab_progress p ON w.id = p.word_id AND p.user_id = ?
       WHERE w.id = ? OR w.word = ?
-    `).get(id, id.toLowerCase()) as any;
+    `).get(userId, id, id.toLowerCase()) as any;
 
     return row ? this.mapRowToWord(row) : null;
   }
 
-  public search(query: string, pos?: string, limit: number = 50): VocabWord[] {
+  public search(query: string, pos?: string, limit: number = 50, userId: string = 'default_user'): VocabWord[] {
     const cleanQuery = `%${query.trim().toLowerCase()}%`;
     let sql = `
       SELECT w.*, p.current_score as score
       FROM words w
-      LEFT JOIN user_vocab_progress p ON w.id = p.word_id
+      LEFT JOIN user_vocab_progress p ON w.id = p.word_id AND p.user_id = ?
       WHERE (w.word LIKE ? OR w.meaning LIKE ? OR w.collocations LIKE ?)
     `;
-    const params: any[] = [cleanQuery, cleanQuery, cleanQuery];
+    const params: any[] = [userId, cleanQuery, cleanQuery, cleanQuery];
 
     if (pos) {
       sql += ' AND w.pos = ?';
@@ -48,34 +49,34 @@ export class VocabService {
     return rows.map(r => this.mapRowToWord(r));
   }
 
-  public getDueWords(limit: number = 20): VocabWord[] {
+  public getDueWords(limit: number = 20, userId: string = 'default_user'): VocabWord[] {
     const now = new Date().toISOString();
     const rows = this.db.prepare(`
       SELECT w.*, p.current_score as score
       FROM words w
-      INNER JOIN user_vocab_progress p ON w.id = p.word_id
+      INNER JOIN user_vocab_progress p ON w.id = p.word_id AND p.user_id = ?
       WHERE p.due_date IS NULL OR p.due_date <= ?
       ORDER BY p.current_score ASC, p.due_date ASC
       LIMIT ?
-    `).all(now, limit) as any[];
+    `).all(userId, now, limit) as any[];
 
     return rows.map(r => this.mapRowToWord(r));
   }
 
-  public getLearnedWords(minScore: number = 2.0): VocabWord[] {
+  public getLearnedWords(minScore: number = 2.0, userId: string = 'default_user'): VocabWord[] {
     const rows = this.db.prepare(`
       SELECT w.*, p.current_score as score
       FROM words w
-      INNER JOIN user_vocab_progress p ON w.id = p.word_id
+      INNER JOIN user_vocab_progress p ON w.id = p.word_id AND p.user_id = ?
       WHERE p.current_score >= ?
       ORDER BY p.current_score DESC
-    `).all(minScore) as any[];
+    `).all(userId, minScore) as any[];
 
     return rows.map(r => this.mapRowToWord(r));
   }
 
-  public getByLevel(levelKey: string = 'intermediate'): VocabWord[] {
-    const all = this.getAll();
+  public getByLevel(levelKey: string = 'intermediate', userId: string = 'default_user'): VocabWord[] {
+    const all = this.getAll(userId);
     const rangeMap: Record<string, [number, number]> = {
       starter: [0, 80],
       foundation: [0, 150],
@@ -85,6 +86,29 @@ export class VocabService {
     };
     const [start, end] = rangeMap[levelKey] || [0, 450];
     return all.slice(start, Math.min(end, all.length));
+  }
+
+  public getAllVocab(userId: string = 'default_user'): VocabWord[] {
+    return this.getAll(userId);
+  }
+
+  public getVocabStats(userId: string = 'default_user'): { total: number; reviewed: number; avgScore: number } {
+    const totalRow = this.db.prepare('SELECT COUNT(*) as count FROM words').get() as { count: number };
+    const statsRow = this.db.prepare(`
+      SELECT COUNT(*) as reviewed, COALESCE(AVG(current_score), 1.0) as avgScore
+      FROM user_vocab_progress
+      WHERE user_id = ?
+    `).get(userId) as { reviewed: number; avgScore: number };
+
+    return {
+      total: totalRow?.count || 0,
+      reviewed: statsRow?.reviewed || 0,
+      avgScore: Number((statsRow?.avgScore || 1.0).toFixed(2))
+    };
+  }
+
+  public recordReview(userId: string, wordId: string, rating: 1 | 2 | 3 | 4 = 3) {
+    return fsrsService.reviewWord(wordId, rating, new Date(), userId);
   }
 
   private mapRowToWord(row: any): VocabWord {

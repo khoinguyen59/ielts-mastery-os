@@ -2,6 +2,7 @@ import { getDatabase } from '../db/sqlite.js';
 import { QuestionDTO } from '../types/question.types.js';
 import { vocabService } from './vocab.service.js';
 import { fsrsService } from './fsrs.service.js';
+import { aiBridgeService } from './ai-bridge.service.js';
 
 export class SynthesisService {
   private db = getDatabase();
@@ -87,10 +88,17 @@ export class SynthesisService {
     return questions;
   }
 
-  private findMatchingQuestion(targetWordId: string, learnedIds: Set<string>): QuestionDTO | null {
+  public findMatchingQuestion(targetWordId: string, learnedIds: Set<string>): QuestionDTO | null {
     const candidates = this.db.prepare(`
       SELECT * FROM questions
       WHERE target_word_id = ? AND status = 'active'
+      ORDER BY 
+        CASE 
+          WHEN quality_tags LIKE '%admin_verified%' THEN 3
+          WHEN quality_tags LIKE '%v2_approved%' THEN 2
+          WHEN quality_tags LIKE '%v1_approved%' THEN 1
+          ELSE 0
+        END DESC, created_at DESC
       LIMIT 10
     `).all(targetWordId) as any[];
 
@@ -115,10 +123,9 @@ export class SynthesisService {
     return this.mapRowToQuestion(candidates[0]);
   }
 
-  private synthesizeClozeQuestion(target: any, learnedIds: Set<string>, allWords: any[]): QuestionDTO {
+  public synthesizeClozeQuestion(target: any, learnedIds: Set<string>, allWords: any[]): QuestionDTO {
     const learnedWords = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
     const chosenLearned = learnedWords.slice(0, 2);
-    const learnedNames = chosenLearned.map(w => w.word);
 
     const baseExample = target.example || `Scholars have observed that measures to apply ${target.word} remain vital.`;
     const regex = new RegExp(`\\b${target.word}\\b`, 'gi');
@@ -133,10 +140,27 @@ export class SynthesisService {
       masked = `${contextPrefix}${masked.charAt(0).toLowerCase() + masked.slice(1)}`;
     }
 
-    // Distractors: pick 3 words of same POS or general
-    const distractors = allWords
-      .filter(w => w.id !== target.id && (w.pos === target.pos || !w.pos))
-      .slice(0, 3);
+    // Distractors: shuffle candidates using Fisher-Yates before slicing
+    const candidateDistractors = allWords.filter(
+      w => w.id !== target.id && (w.pos === target.pos || !w.pos)
+    );
+    for (let i = candidateDistractors.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidateDistractors[i], candidateDistractors[j]] = [candidateDistractors[j], candidateDistractors[i]];
+    }
+    const distractors = candidateDistractors.slice(0, 3);
+
+    // Fallback if less than 3 distractors of same POS
+    if (distractors.length < 3) {
+      const fallbackPool = allWords.filter(
+        w => w.id !== target.id && !distractors.some(d => d.id === w.id)
+      );
+      for (let i = fallbackPool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [fallbackPool[i], fallbackPool[j]] = [fallbackPool[j], fallbackPool[i]];
+      }
+      distractors.push(...fallbackPool.slice(0, 3 - distractors.length));
+    }
 
     const options = [target.word, ...distractors.map(d => d.word)];
     const correctIdx = Math.floor(Math.random() * 4);
@@ -144,11 +168,16 @@ export class SynthesisService {
     options[0] = options[correctIdx];
     options[correctIdx] = target.word;
 
+    // Pre-validation: ensure 4 unique options and valid index
+    const uniqueOptions = new Set(options.map(o => (o || '').trim().toLowerCase()));
+    const isStructureValid = options.length === 4 && uniqueOptions.size === 4 && correctIdx >= 0 && correctIdx <= 3;
+    const initialStatus: 'active' | 'rejected' = isStructureValid ? 'active' : 'rejected';
+
     const errorTags = ['[LỖI-COLLOCATION-CLASH]', '[LỖI-SẮC-THÁI-HỌC-THUẬT]', '[LỖI-PARAPHRASE]'];
     const errorTag = errorTags[Math.floor(Math.random() * errorTags.length)];
 
     const newQ: QuestionDTO = {
-      id: `synth_${target.id}_${Date.now()}`,
+      id: `synth_${target.id}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       target_word_id: target.id,
       target_word: target.word,
       embedded_word_ids: chosenLearned.map(w => w.id),
@@ -160,11 +189,11 @@ export class SynthesisService {
       error_tag: errorTag,
       band_75_upgrade: `Furthermore, policymakers should actively ${target.word} key protocols to safeguard outcomes.`,
       band_85_upgrade: `Consequently, it is imperative to rigorously ${target.word} structural systemic frameworks.`,
-      status: 'active',
+      status: initialStatus,
       quality_tags: ['deterministic_cloze', 'offline_fallback']
     };
 
-    // Persist synthesized question to SQLite so that grading and feedback disputes succeed
+    // Persist synthesized question to SQLite if not corrupted
     try {
       this.db.prepare(`
         INSERT OR REPLACE INTO questions (id, target_word_id, embedded_word_ids, prompt, masked_sentence, options, correct_index, explanation, error_tag, band_75_upgrade, band_85_upgrade, status, quality_tags)
@@ -187,6 +216,22 @@ export class SynthesisService {
     } catch {
       // Non-blocking in read-only environments
     }
+
+    // Pre-validation call to AI Bridge (async, non-blocking to keep getSynthesisRound < 100ms)
+    aiBridgeService.validateQuestion(
+      {
+        prompt: newQ.prompt,
+        options: newQ.options,
+        correct_index: newQ.correct_index
+      },
+      'ai_v1'
+    ).then(valResult => {
+      if (!valResult.valid && newQ.status === 'active') {
+        try {
+          this.db.prepare("UPDATE questions SET status = 'under_review_v1' WHERE id = ?").run(newQ.id);
+        } catch {}
+      }
+    }).catch(() => {});
 
     return newQ;
   }

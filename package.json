@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev:app": "tsx watch src/api/server.ts",
-    "dev:ai": "cmd /c \"python -m uvicorn ai_engine.main:app --port 8001 --reload\"",
+    "dev:ai": "python -m uvicorn ai_engine.main:app --port 8001 --reload",
     "dev": "concurrently --kill-others-on-fail=false -p \"[{name}]\" -n \"APP,AI\" -c \"cyan,magenta\" \"npm run dev:app\" \"npm run dev:ai\"",
     "dev:all": "concurrently --kill-others-on-fail=false -p \"[{name}]\" -n \"APP,AI\" -c \"cyan,magenta\" \"npm run dev:app\" \"npm run dev:ai\"",
     "build": "tsc",
     "seed": "tsx src/db/seed.ts",
     "test:app": "vitest run",
-    "test:ai": "cmd /c \"python -m pytest ai_engine/tests/ -v\"",
+    "test:ai": "python -m pytest ai_engine/tests/ -v",
     "test": "vitest run && npm run test:ai"
   },
   "dependencies": {

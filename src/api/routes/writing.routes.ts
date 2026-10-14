@@ -34,7 +34,7 @@ export async function writingRoutes(fastify: FastifyInstance): Promise<void> {
     }
 
     try {
-      const result = writingService.evaluateTranslation(chunk_id, user_submission, user_id || 'default_user');
+      const result = await writingService.evaluateTranslation(chunk_id, user_submission, user_id || 'default_user');
       return reply.send({
         success: true,
         data: result

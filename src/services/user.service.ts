@@ -1,4 +1,4 @@
-import { getDatabase } from '../db/sqlite.js';
+import { getDatabase, ensureUserExists } from '../db/sqlite.js';
 import { UserProfile, UserStats } from '../types/auth.types.js';
 
 export class UserService {
@@ -15,6 +15,7 @@ export class UserService {
   }
 
   async updateUserStats(userId: string, partialStats: Partial<UserStats>): Promise<UserStats | null> {
+    ensureUserExists(userId, this.db);
     const existing = await this.getUserStats(userId);
     if (!existing) {
       this.db.prepare(`

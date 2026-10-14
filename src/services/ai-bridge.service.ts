@@ -54,11 +54,15 @@ export class AIBridgeService {
     return this.calculateLocalHeuristicSimilarity(candidateText, referenceTexts, performance.now() - start);
   }
 
-  public async validateQuestion(question: {
-    prompt: string;
-    options: string[];
-    correct_index: number;
-  }): Promise<QuestionValidationResult> {
+  public async validateQuestion(
+    question: {
+      prompt: string;
+      options: string[];
+      correct_index: number;
+    },
+    tier: 'ai_v1' | 'ai_v2' = 'ai_v1',
+    feedbackReason?: string
+  ): Promise<QuestionValidationResult> {
     try {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), this.timeoutMs);
@@ -66,7 +70,12 @@ export class AIBridgeService {
       const resp = await fetch(`${this.baseUrl}/v1/validate-question`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(question),
+        body: JSON.stringify({
+          prompt: question.prompt,
+          options: question.options,
+          correct_index: question.correct_index,
+          feedback_reason: feedbackReason
+        }),
         signal: controller.signal
       });
 
@@ -77,7 +86,7 @@ export class AIBridgeService {
         return {
           valid: data.valid ?? true,
           errors: data.errors ?? [],
-          tier: data.tier ?? 'ai_v1',
+          tier: data.tier ?? (tier === 'ai_v2' ? 'ai_validator_2' : 'ai_validator_1'),
           fallback: false
         };
       }
@@ -90,8 +99,8 @@ export class AIBridgeService {
     if (!question.options || question.options.length !== 4) {
       errors.push('Câu hỏi phải có đúng 4 đáp án lựa chọn');
     }
-    const unique = new Set(question.options.map(o => o.trim().toLowerCase()));
-    if (unique.size !== question.options.length) {
+    const unique = new Set(question.options?.map(o => (o || '').trim().toLowerCase()) || []);
+    if (unique.size !== (question.options?.length || 0)) {
       errors.push('Tồn tại các đáp án trùng lặp');
     }
     if (question.correct_index < 0 || question.correct_index > 3) {
@@ -101,7 +110,7 @@ export class AIBridgeService {
     return {
       valid: errors.length === 0,
       errors,
-      tier: 'local_deterministic_v1',
+      tier: tier === 'ai_v2' ? 'ai_validator_2' : 'local_deterministic_v1',
       fallback: true
     };
   }

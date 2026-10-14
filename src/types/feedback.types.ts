@@ -5,6 +5,7 @@ export type FeedbackReason =
   | 'two_correct_answers'
   | 'grammar_typo'
   | 'incorrect_explanation'
+  | 'wrong_collocation'
   | 'other';
 
 export interface FeedbackSubmissionDTO {
@@ -29,6 +30,7 @@ export const FeedbackSubmissionSchema = z.object({
     'two_correct_answers',
     'grammar_typo',
     'incorrect_explanation',
+    'wrong_collocation',
     'other'
   ]),
   details: z.string().optional()

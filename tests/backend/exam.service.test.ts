@@ -67,4 +67,13 @@ describe('ExamService Unit Tests (Cambridge 21 & Reading-to-Writing)', () => {
       expect(res.estimated_band).toBeDefined();
     }
   });
+
+  it('handles rapid consecutive exam submissions without primary key collisions', () => {
+    const passage = examService.getAllPassages()[0];
+    const user = `collision_test_${Date.now()}`;
+    const res1 = examService.evaluatePassageSubmission(passage.id, { '1': 'TRUE' }, user);
+    const res2 = examService.evaluatePassageSubmission(passage.id, { '1': 'FALSE' }, user);
+    expect(res1.score_ratio).toBeDefined();
+    expect(res2.score_ratio).toBeDefined();
+  });
 });

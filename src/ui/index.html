@@ -64,39 +64,23 @@
 
                     <div class="winding-nodes-column">
                         <div class="path-node-row pos-center">
-                            <button class="path-bubble-node node-active" data-action="open-flashcard" title="Chặng 1: Nạp Flashcard 3D">
-                                <span class="node-icon"><img src="assets/icons/badge_flashcard.svg" class="node-svg" alt="Flashcard"></span>
-                                <span class="node-crown">👑</span>
-                                <div class="node-pulse-ring"></div>
-                            </button>
+                            <button class="path-bubble-node node-active" data-action="open-flashcard" title="Chặng 1: Nạp Flashcard 3D"><span class="node-icon"><img src="assets/icons/badge_flashcard.svg" class="node-svg" alt="Flashcard"></span><span class="node-crown">👑</span><div class="node-pulse-ring"></div></button>
                             <span class="node-label">Nạp 15 Từ Đầu</span>
                         </div>
-
                         <div class="path-node-row pos-right">
-                            <button class="path-bubble-node node-unlocked" data-action="open-quiz" title="Chặng 2: Đấu Trường Quiz Blitz">
-                                <span class="node-icon"><img src="assets/icons/badge_blitz.svg" class="node-svg" alt="Quiz Blitz"></span>
-                            </button>
+                            <button class="path-bubble-node node-unlocked" data-action="open-quiz" title="Chặng 2: Đấu Trường Quiz Blitz"><span class="node-icon"><img src="assets/icons/badge_blitz.svg" class="node-svg" alt="Quiz Blitz"></span></button>
                             <span class="node-label">Phản Xạ 10s</span>
                         </div>
-
                         <div class="path-node-row pos-left">
-                            <button class="path-chest-node" data-action="claim-chest" title="Rương phần thưởng">
-                                <span class="chest-icon"><img src="assets/icons/chest.svg" class="node-svg" alt="Rương Báu"></span>
-                            </button>
+                            <button class="path-chest-node" data-action="claim-chest" title="Rương phần thưởng"><span class="chest-icon"><img src="assets/icons/chest.svg" class="node-svg" alt="Rương Báu"></span></button>
                             <span class="node-label">Rương Coin</span>
                         </div>
-
                         <div class="path-node-row pos-center">
-                            <button class="path-bubble-node node-unlocked" data-action="open-writing" title="Chặng 3: Luyện Dịch Task 2">
-                                <span class="node-icon"><img src="assets/icons/badge_writing.svg" class="node-svg" alt="Writing"></span>
-                            </button>
+                            <button class="path-bubble-node node-unlocked" data-action="open-writing" title="Chặng 3: Luyện Dịch Task 2"><span class="node-icon"><img src="assets/icons/badge_writing.svg" class="node-svg" alt="Writing"></span></button>
                             <span class="node-label">Dịch Task 2</span>
                         </div>
-
                         <div class="path-node-row pos-right">
-                            <button class="path-bubble-node node-trophy" data-action="open-exam" title="Chặng 4: Đề Thi Thật Cam 21">
-                                <span class="node-icon"><img src="assets/icons/badge_trophy.svg" class="node-svg" alt="Cam 21"></span>
-                            </button>
+                            <button class="path-bubble-node node-trophy" data-action="open-exam" title="Chặng 4: Đề Thi Thật Cam 21"><span class="node-icon"><img src="assets/icons/badge_trophy.svg" class="node-svg" alt="Cam 21"></span></button>
                             <span class="node-label">Thử Thách Cam 21</span>
                         </div>
                     </div>
@@ -211,7 +195,7 @@
                     <div class="quiz-question-character-row">
                         <img class="quiz-mascot-speech-avatar" id="quiz-character-avatar" src="assets/mascot/cabi_02_chamhoc.svg" alt="Cabi">
                         <div class="quiz-speech-balloon">
-                            <span class="quiz-badge-tiny" id="quiz-type-badge">ANH ➔ VIỆT</span>
+                            <span class="quiz-badge-tiny" id="quiz-type-badge">Điền từ học thuật</span>
                             <h2 class="quiz-prompt-text" id="quiz-question-prompt">Nghĩa của từ này là gì?</h2>
                         </div>
                     </div>
@@ -237,12 +221,19 @@
                 <div class="drawer-inner">
                     <div class="drawer-status-group">
                         <span class="status-big-icon" id="drawer-icon">✓</span>
-                        <div>
+                        <div class="drawer-text-wrap">
                             <h3 class="status-title" id="drawer-title">Chính xác!</h3>
                             <p class="status-explanation" id="drawer-explanation">Giải thích câu hỏi...</p>
+                            <div class="drawer-upgrades" id="drawer-upgrades" style="display:none;">
+                                <div class="drawer-upgrade-item upgrade-75"><span class="upgrade-tag">Band 7.5+</span><span class="upgrade-text" id="drawer-upgrade-75"></span></div>
+                                <div class="drawer-upgrade-item upgrade-85"><span class="upgrade-tag">Band 8.5+</span><span class="upgrade-text" id="drawer-upgrade-85"></span></div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn-3d btn-drawer-action" id="drawer-continue-btn">TIẾP TỤC</button>
+                    <div class="drawer-actions-group">
+                        <button class="btn-drawer-report" id="drawer-report-btn" title="Báo lỗi câu hỏi">🚩 Báo Lỗi</button>
+                        <button class="btn-3d btn-drawer-action" id="drawer-continue-btn">TIẾP TỤC</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -338,18 +329,39 @@
     <!-- RESULT & VOCAB MODALS -->
     <div class="modal-overlay" id="exam-result-modal" style="display:none;"><div class="modal-dialog"><div class="modal-header"><h3>Kết Quả Bài Thi</h3><button class="close-x" id="modal-close-btn">&times;</button></div><div id="modal-result-body"></div></div></div>
     <div class="modal-overlay" id="vocab-detail-modal" style="display:none;"><div class="modal-dialog"><div class="modal-header"><h3 id="vocab-modal-title">Chi Tiết Từ Vựng</h3><button class="close-x" id="vocab-modal-close-btn">&times;</button></div><div id="vocab-modal-body"></div></div></div>
-    <script src="js/sound_manager.js"></script>
-    <script src="js/mascot_manager.js"></script>
-    <script src="js/local_store.js"></script>
-    <script src="js/auth_manager.js"></script>
-    <script src="js/placement_manager.js"></script>
-    <script src="js/energy_manager.js"></script>
-    <script src="js/progression_manager.js"></script>
-    <script src="js/flashcard_studio.js"></script>
-    <script src="js/quiz_blitz.js"></script>
-    <script src="js/course_manager.js"></script>
-    <script src="js/writing_studio.js"></script>
-    <script src="js/exam_runner.js"></script>
-    <script src="js/app.js"></script>
+    <!-- QUIZ REPORT MODAL -->
+    <div class="modal-overlay" id="quiz-report-modal" style="display:none;">
+        <div class="modal-dialog report-modal-dialog">
+            <div class="modal-header">
+                <h3>🚩 Báo Lỗi Câu Hỏi</h3>
+                <button class="close-x" id="quiz-report-close-btn">&times;</button>
+            </div>
+            <div class="modal-body report-modal-body">
+                <p class="report-subtitle">Ý kiến đóng góp giúp hệ thống kiểm định 3 tầng lọc và tinh chỉnh câu hỏi chuẩn xác.</p>
+                <div class="report-form-group">
+                    <label class="report-label" for="report-reason-select">Lý do báo lỗi:</label>
+                    <select class="duo-select w-full" id="report-reason-select">
+                        <option value="grammar_typo">Lỗi chính tả / ngữ pháp (Grammar/Typo)</option>
+                        <option value="ambiguous_answer">Đáp án mơ hồ, không rõ ràng (Ambiguous Answer)</option>
+                        <option value="two_correct_answers">Có 2 đáp án đều đúng (Two Correct Answers)</option>
+                        <option value="wrong_collocation">Sai Collocation / Sắc thái học thuật (Wrong Collocation)</option>
+                        <option value="other">Lý do khác (Other)</option>
+                    </select>
+                </div>
+                <div class="report-form-group">
+                    <label class="report-label" for="report-details-input">Mô tả chi tiết (tùy chọn):</label>
+                    <textarea class="duo-textarea report-textarea" id="report-details-input" placeholder="Mô tả cụ thể vấn đề bạn gặp phải..."></textarea>
+                </div>
+                <div id="report-status-msg" class="report-status-msg" style="display:none;"></div>
+                <div class="report-actions">
+                    <button class="btn-3d btn-3d-gray" id="quiz-report-cancel-btn">Hủy</button>
+                    <button class="btn-3d btn-3d-blue" id="quiz-report-submit-btn">Gửi Báo Lỗi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/sound_manager.js"></script><script src="js/mascot_manager.js"></script><script src="js/local_store.js"></script><script src="js/auth_manager.js"></script>
+    <script src="js/placement_manager.js"></script><script src="js/energy_manager.js"></script><script src="js/progression_manager.js"></script><script src="js/flashcard_studio.js"></script>
+    <script src="js/quiz_blitz.js"></script><script src="js/course_manager.js"></script><script src="js/writing_studio.js"></script><script src="js/exam_runner.js"></script><script src="js/app.js"></script>
 </body>
 </html>

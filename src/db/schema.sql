@@ -17,8 +17,24 @@ CREATE TABLE IF NOT EXISTS words (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT,
+  salt TEXT,
+  display_name TEXT,
+  avatar TEXT DEFAULT 'cabi_academic',
+  target_band TEXT DEFAULT '7.5 - 8.5+',
+  starting_band TEXT DEFAULT '6.0',
+  is_guest INTEGER DEFAULT 0,
+  onboarding_completed INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS user_vocab_progress (
-  word_id TEXT PRIMARY KEY REFERENCES words(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  word_id TEXT NOT NULL REFERENCES words(id) ON DELETE CASCADE,
   stability REAL DEFAULT 0.0,
   difficulty REAL DEFAULT 0.0,
   reps INTEGER DEFAULT 0,
@@ -27,7 +43,8 @@ CREATE TABLE IF NOT EXISTS user_vocab_progress (
   due_date TEXT,
   last_review TEXT,
   current_score REAL DEFAULT 1.0,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, word_id)
 );
 
 CREATE TABLE IF NOT EXISTS questions (
@@ -49,6 +66,7 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE TABLE IF NOT EXISTS exam_submissions (
   id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   passage_id TEXT NOT NULL,
   submission_type TEXT NOT NULL,
   answers TEXT NOT NULL,
@@ -60,7 +78,7 @@ CREATE TABLE IF NOT EXISTS exam_submissions (
 );
 
 CREATE TABLE IF NOT EXISTS user_stats (
-  user_id TEXT PRIMARY KEY,
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   target_band TEXT DEFAULT '7.5 - 8.5+',
   starting_band TEXT DEFAULT '6.0',
   streak_days INTEGER DEFAULT 1,
@@ -83,21 +101,6 @@ CREATE TABLE IF NOT EXISTS question_feedback_logs (
   review_stage TEXT DEFAULT 'pending_v1',
   reward_coins INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS users (
-  id TEXT PRIMARY KEY,
-  username TEXT NOT NULL UNIQUE,
-  password_hash TEXT,
-  salt TEXT,
-  display_name TEXT,
-  avatar TEXT DEFAULT 'cabi_academic',
-  target_band TEXT DEFAULT '7.5 - 8.5+',
-  starting_band TEXT DEFAULT '6.0',
-  is_guest INTEGER DEFAULT 0,
-  onboarding_completed INTEGER DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_sessions (
@@ -123,9 +126,10 @@ CREATE INDEX IF NOT EXISTS idx_words_word ON words(word);
 CREATE INDEX IF NOT EXISTS idx_questions_target ON questions(target_word_id, status);
 CREATE INDEX IF NOT EXISTS idx_progress_due ON user_vocab_progress(due_date);
 CREATE INDEX IF NOT EXISTS idx_progress_score ON user_vocab_progress(current_score);
+CREATE INDEX IF NOT EXISTS idx_vocab_progress_user ON user_vocab_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_question ON question_feedback_logs(question_id);
 CREATE INDEX IF NOT EXISTS idx_exam_passage ON exam_submissions(passage_id);
+CREATE INDEX IF NOT EXISTS idx_exam_sub_user ON exam_submissions(user_id, passage_id);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(token);
 CREATE INDEX IF NOT EXISTS idx_user_lesson_progress ON user_lesson_progress(user_id, unit_id);
-

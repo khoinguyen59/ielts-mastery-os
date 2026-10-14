@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { userService } from '../../src/services/user.service.js';
-import { getDatabase } from '../../src/db/sqlite.js';
+import { getDatabase, ensureUserExists } from '../../src/db/sqlite.js';
 
 describe('UserService Progression & Energy Tests', () => {
   const testUserId = `test_user_${Date.now()}`;
@@ -62,5 +62,21 @@ describe('UserService Progression & Energy Tests', () => {
     const prog = await userService.getNodeProgression(testUserId, 'unit_test');
     expect(prog.completed_nodes).toContain(1);
     expect(prog.unlocked_node).toBe(2);
+  });
+
+  it('verifies ON DELETE CASCADE removes user_stats when user is deleted', () => {
+    const db = getDatabase();
+    const cascadeUser = `cascade_test_${Date.now()}`;
+    db.prepare('DELETE FROM users WHERE id = ?').run(cascadeUser);
+    ensureUserExists(cascadeUser, db);
+    db.prepare('INSERT OR REPLACE INTO user_stats (user_id, coins) VALUES (?, ?)').run(cascadeUser, 999);
+
+    const beforeCount = (db.prepare('SELECT count(*) as c FROM user_stats WHERE user_id = ?').get(cascadeUser) as any).c;
+    expect(beforeCount).toBe(1);
+
+    db.prepare('DELETE FROM users WHERE id = ?').run(cascadeUser);
+
+    const afterCount = (db.prepare('SELECT count(*) as c FROM user_stats WHERE user_id = ?').get(cascadeUser) as any).c;
+    expect(afterCount).toBe(0);
   });
 });

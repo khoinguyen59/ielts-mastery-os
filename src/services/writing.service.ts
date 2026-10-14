@@ -1,8 +1,11 @@
 import { WritingChunk, WritingEvaluationResponse } from '../types/writing.types.js';
-import { vocabService } from './vocab.service.js';
+import { aiBridgeService } from './ai-bridge.service.js';
+import { fsrsService } from './fsrs.service.js';
+import { getDatabase } from '../db/sqlite.js';
 
 export class WritingService {
   private chunks: WritingChunk[] = [];
+  private db = getDatabase();
 
   constructor() {
     this.initChunks();
@@ -81,16 +84,21 @@ export class WritingService {
     return this.chunks.find(c => c.id === id) || null;
   }
 
-  public evaluateTranslation(chunkId: string, userText: string, userId: string = 'default_user'): WritingEvaluationResponse {
+  public async evaluateTranslation(
+    chunkId: string,
+    userText: string,
+    userId: string = 'default_user'
+  ): Promise<WritingEvaluationResponse> {
     const chunk = this.getChunkById(chunkId);
     if (!chunk) {
       throw new Error(`Writing chunk ${chunkId} not found`);
     }
 
-    const cleanText = (userText || '').trim().toLowerCase();
+    const cleanText = (userText || '').trim();
     if (!cleanText) {
       throw new Error('User translation cannot be empty');
     }
+    const lowerText = cleanText.toLowerCase();
 
     const matchedWords: string[] = [];
     const missingWords: string[] = [];
@@ -98,21 +106,39 @@ export class WritingService {
     for (const tw of chunk.target_words) {
       const root = tw.word.toLowerCase();
       const stem = root.length > 4 ? root.slice(0, -1) : root;
-      if (cleanText.includes(root) || cleanText.includes(stem)) {
+      if (lowerText.includes(root) || lowerText.includes(stem)) {
         matchedWords.push(tw.word);
         try {
-          vocabService.recordReview(userId, tw.id, 3);
+          // Anti-demotion FSRS safeguard: protect already mastered vocabulary
+          const card = fsrsService.getCard(tw.id, userId);
+          const currentScore = card?.current_score ?? 1.0;
+          const { newScore } = fsrsService.reviewWord(tw.id, 3, new Date(), userId);
+          if (currentScore > newScore) {
+            this.db.prepare('UPDATE user_vocab_progress SET current_score = ? WHERE word_id = ? AND user_id = ?')
+              .run(currentScore, tw.id, userId);
+          }
         } catch {
-          // ignore background update error
+          // Non-blocking background sync
         }
       } else {
         missingWords.push(tw.word);
       }
     }
 
+    // Call AI Semantic Scorer
+    const aiRes = await aiBridgeService.getSemanticSimilarity(cleanText, [
+      chunk.band_75_model,
+      chunk.band_85_model
+    ]);
+
     const words = cleanText.split(/\s+/).filter(Boolean);
     const wordCount = words.length;
-    const coverageRatio = Number((matchedWords.length / chunk.target_words.length).toFixed(2));
+    const coverageRatio = chunk.target_words.length > 0
+      ? Number((matchedWords.length / chunk.target_words.length).toFixed(2))
+      : 0;
+
+    // Standardized composite score_ratio in 0.0 - 1.0 (60% AI semantic similarity + 40% target word coverage)
+    const scoreRatio = Math.max(0.0, Math.min(1.0, Number(((aiRes.score * 0.6) + (coverageRatio * 0.4)).toFixed(2))));
 
     const feedbackParts: string[] = [];
     if (coverageRatio === 1) {
@@ -128,10 +154,12 @@ export class WritingService {
     }
 
     let bandEstimate = '6.0 - 6.5';
-    if (coverageRatio >= 1.0 && wordCount >= 14) {
-      bandEstimate = '7.5 - 8.0';
-    } else if (coverageRatio >= 0.66 && wordCount >= 12) {
-      bandEstimate = '7.0';
+    if (scoreRatio >= 0.85) {
+      bandEstimate = '8.0 - 8.5';
+    } else if (scoreRatio >= 0.70) {
+      bandEstimate = '7.5';
+    } else if (scoreRatio >= 0.55) {
+      bandEstimate = '6.5 - 7.0';
     }
 
     return {
@@ -140,6 +168,8 @@ export class WritingService {
       used_target_words: matchedWords,
       missing_target_words: missingWords,
       coverage_ratio: coverageRatio,
+      score_ratio: scoreRatio,
+      similarity_score: aiRes.score,
       band_estimate: bandEstimate,
       band_75_model: chunk.band_75_model,
       band_85_model: chunk.band_85_model,

@@ -1,4 +1,4 @@
-import { getDatabase } from '../db/sqlite.js';
+import { getDatabase, ensureUserExists } from '../db/sqlite.js';
 import { DiagnosticQuestion, LevelConfig, PlacementResult, PresetLevel } from '../types/placement.types.js';
 import { vocabService } from './vocab.service.js';
 
@@ -115,6 +115,7 @@ export class PlacementService {
   public selectLevel(levelKey: PresetLevel, userId: string = 'default_user'): LevelConfig {
     const lvl = LEVEL_PRESETS[levelKey] || LEVEL_PRESETS.intermediate;
     try {
+      ensureUserExists(userId, this.db);
       this.db.prepare(`
         INSERT INTO user_stats (user_id, starting_band, target_band, updated_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
@@ -152,6 +153,7 @@ export class PlacementService {
 
     const preset = LEVEL_PRESETS[assignedLevel];
     try {
+      ensureUserExists(userId, this.db);
       this.db.prepare(`
         INSERT INTO user_stats (user_id, starting_band, target_band, xp, updated_at)
         VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)

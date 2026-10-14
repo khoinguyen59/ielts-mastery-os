@@ -24,7 +24,19 @@
         }
     }
 
+    function resetTimer() {
+        if (state.timerInterval) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+        }
+        state.isTimerRunning = false;
+        state.timerSeconds = 20 * 60;
+        if ($('exam-timer-display')) $('exam-timer-display').textContent = '20:00';
+        if ($('exam-timer-toggle-btn')) $('exam-timer-toggle-btn').textContent = 'Start';
+    }
+
     async function loadPassage(passageId) {
+        resetTimer();
         state.currentPassageId = passageId;
         $$('.pass-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.pid === passageId));
         const passage = await apiRequest(`/api/exams/${passageId}`);
@@ -63,6 +75,7 @@
         const btn = $('exam-timer-toggle-btn');
         if (state.isTimerRunning) {
             clearInterval(state.timerInterval);
+            state.timerInterval = null;
             state.isTimerRunning = false;
             if (btn) btn.textContent = 'Start';
         } else {
@@ -75,7 +88,7 @@
                     const s = (state.timerSeconds % 60).toString().padStart(2, '0');
                     if ($('exam-timer-display')) $('exam-timer-display').textContent = `${m}:${s}`;
                 } else {
-                    clearInterval(state.timerInterval);
+                    resetTimer();
                     alert('Hết giờ làm bài!');
                 }
             }, 1000);
@@ -124,5 +137,5 @@
         loadPassage('t1_p1');
     }
 
-    window.examRunner = { init, loadPassage, toggleTimer, submitExam, clearExam };
+    window.examRunner = { init, loadPassage, toggleTimer, submitExam, clearExam, resetTimer };
 })();

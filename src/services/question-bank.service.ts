@@ -1,6 +1,7 @@
 import { getDatabase } from '../db/sqlite.js';
 import { FeedbackReason, FeedbackSubmissionDTO, UserTrustMetrics } from '../types/feedback.types.js';
 import { QuestionDTO, QuestionStatus } from '../types/question.types.js';
+import { aiBridgeService } from './ai-bridge.service.js';
 
 export class QuestionBankService {
   private db = getDatabase();
@@ -40,8 +41,44 @@ export class QuestionBankService {
       VALUES (?, ?, ?, ?, ?, 'pending_v1', 0)
     `).run(feedbackId, submission.question_id, userId, submission.reason, submission.details || '');
 
-    // If user has high trust score (>= 0.7), move question to under_review_v1
-    if (metrics.trust_score >= 0.7) {
+    // Query feedback reports within the last 30 days
+    const disputeStats = this.db.prepare(`
+      SELECT 
+        COUNT(DISTINCT user_id) as distinct_users,
+        SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) as this_user_reports
+      FROM question_feedback_logs
+      WHERE question_id = ? AND datetime(created_at) >= datetime('now', '-30 days')
+    `).get(userId, submission.question_id) as { distinct_users: number; this_user_reports: number } | undefined;
+
+    const distinctUsers = disputeStats?.distinct_users ?? 0;
+    const thisUserReports = disputeStats?.this_user_reports ?? 0;
+
+    // Trigger AI-Validator-2 escalation if distinct users >= 3 OR this user reports >= 2
+    if (distinctUsers >= 3 || thisUserReports >= 2) {
+      this.db.prepare(`
+        UPDATE questions SET status = 'under_review_v2' WHERE id = ?
+      `).run(submission.question_id);
+
+      const qRow = this.db.prepare('SELECT * FROM questions WHERE id = ?').get(submission.question_id) as any;
+      if (qRow) {
+        let options: string[] = [];
+        try {
+          options = JSON.parse(qRow.options || '[]');
+        } catch {
+          options = [];
+        }
+        aiBridgeService.validateQuestion(
+          {
+            prompt: qRow.prompt,
+            options,
+            correct_index: qRow.correct_index
+          },
+          'ai_v2',
+          submission.reason
+        ).catch(() => {});
+      }
+    } else if (metrics.trust_score >= 0.7) {
+      // If user has high trust score (>= 0.7), move question to under_review_v1
       this.db.prepare(`
         UPDATE questions SET status = 'under_review_v1' WHERE id = ?
       `).run(submission.question_id);
@@ -92,7 +129,7 @@ export class QuestionBankService {
 
     // Update question status
     if (isValid) {
-      this.db.prepare("UPDATE questions SET status = 'under_admin_review' WHERE id = ?").run(fb.question_id);
+      this.db.prepare("UPDATE questions SET status = 'rejected' WHERE id = ?").run(fb.question_id);
     } else {
       this.db.prepare("UPDATE questions SET status = 'active' WHERE id = ?").run(fb.question_id);
     }

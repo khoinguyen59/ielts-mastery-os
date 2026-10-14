@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getDatabase } from '../db/sqlite.js';
+import { getDatabase, ensureUserExists } from '../db/sqlite.js';
 import { aiBridgeService } from './ai-bridge.service.js';
 
 export interface ExamQuestion {
@@ -131,10 +131,11 @@ export class ExamService {
     else if (ratio >= 0.40) band = '5.5';
 
     // Store in SQLite
+    this.ensureUserExists(userId);
     this.db.prepare(`
-      INSERT INTO exam_submissions (id, passage_id, submission_type, answers, score_ratio, estimated_band, raw_score)
-      VALUES (?, ?, 'reading', ?, ?, ?, ?)
-    `).run(`sub_${Date.now()}`, passageId, JSON.stringify(answers), ratio, band, correctCount);
+      INSERT INTO exam_submissions (id, user_id, passage_id, submission_type, answers, score_ratio, estimated_band, raw_score)
+      VALUES (?, ?, ?, 'reading', ?, ?, ?, ?)
+    `).run(`sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, userId, passageId, JSON.stringify(answers), ratio, band, correctCount);
 
     return {
       passage_id: passageId,
@@ -196,11 +197,13 @@ export class ExamService {
     else if (finalRatio >= 0.70) band = '7.5';
     else if (finalRatio >= 0.55) band = '6.5 - 7.0';
 
+    this.ensureUserExists(userId);
     this.db.prepare(`
-      INSERT INTO exam_submissions (id, passage_id, submission_type, answers, score_ratio, estimated_band, raw_score, ai_feedback)
-      VALUES (?, ?, 'writing', ?, ?, ?, ?, ?)
+      INSERT INTO exam_submissions (id, user_id, passage_id, submission_type, answers, score_ratio, estimated_band, raw_score, ai_feedback)
+      VALUES (?, ?, ?, 'writing', ?, ?, ?, ?, ?)
     `).run(
-      `sub_w_${Date.now()}`,
+      `sub_w_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      userId,
       chunkId,
       JSON.stringify({ text: submissionText }),
       finalRatio,
@@ -276,6 +279,10 @@ export class ExamService {
         band_85_model: 'Amid periods of profound geopolitical conflict, curating public artistic displays serves to catalyze communal solidarity, while significantly alleviating collective feelings of social isolation.'
       }
     ];
+  }
+
+  private ensureUserExists(userId: string): void {
+    ensureUserExists(userId, this.db);
   }
 }
 

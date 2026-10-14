@@ -22,8 +22,20 @@ interface RawVocabEntry {
   score?: number;
 }
 
-export function seedDatabase(customDbPath?: string): { wordsCount: number; questionsCount: number } {
+export function seedDatabase(customDbPath?: string, targetUserId: string = 'default_user'): { wordsCount: number; questionsCount: number } {
   const db = getDatabase(customDbPath);
+
+  // Ensure target user exists in users and user_stats
+  db.prepare(`
+    INSERT OR IGNORE INTO users (id, username, display_name, is_guest)
+    VALUES (?, ?, ?, 1)
+  `).run(targetUserId, targetUserId, targetUserId);
+
+  db.prepare(`
+    INSERT OR IGNORE INTO user_stats (user_id, target_band, starting_band, streak_days, coins, hearts, trust_score, daily_goal, xp)
+    VALUES (?, '7.5 - 8.5+', '6.0', 1, 100, 5, 1.0, 10, 0)
+  `).run(targetUserId);
+
   const masterVocabPath = path.resolve(process.cwd(), 'data', 'vocab', 'master_vocab.json');
 
   if (!fs.existsSync(masterVocabPath)) {
@@ -66,8 +78,8 @@ export function seedDatabase(customDbPath?: string): { wordsCount: number; quest
   `);
 
   const insertProgress = db.prepare(`
-    INSERT OR REPLACE INTO user_vocab_progress (word_id, stability, difficulty, reps, lapses, state, due_date, last_review, current_score)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO user_vocab_progress (user_id, word_id, stability, difficulty, reps, lapses, state, due_date, last_review, current_score)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertQuestion = db.prepare(`
@@ -94,6 +106,7 @@ export function seedDatabase(customDbPath?: string): { wordsCount: number; quest
 
       const score = markdownScores[w.word] ?? 1.0;
       insertProgress.run(
+        targetUserId,
         w.id,
         score > 2.0 ? 3.5 : 0.0,
         score > 2.0 ? 2.0 : 0.0,
