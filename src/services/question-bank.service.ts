@@ -53,35 +53,40 @@ export class QuestionBankService {
     const distinctUsers = disputeStats?.distinct_users ?? 0;
     const thisUserReports = disputeStats?.this_user_reports ?? 0;
 
+    const qRow = this.db.prepare('SELECT * FROM questions WHERE id = ?').get(submission.question_id) as any;
+    let options: string[] = [];
+    if (qRow) {
+      try { options = JSON.parse(qRow.options || '[]'); } catch { options = []; }
+    }
+
     // Trigger AI-Validator-2 escalation if distinct users >= 3 OR this user reports >= 2
     if (distinctUsers >= 3 || thisUserReports >= 2) {
-      this.db.prepare(`
-        UPDATE questions SET status = 'under_review_v2' WHERE id = ?
-      `).run(submission.question_id);
-
-      const qRow = this.db.prepare('SELECT * FROM questions WHERE id = ?').get(submission.question_id) as any;
+      this.db.prepare("UPDATE questions SET status = 'under_review_v2' WHERE id = ?").run(submission.question_id);
       if (qRow) {
-        let options: string[] = [];
-        try {
-          options = JSON.parse(qRow.options || '[]');
-        } catch {
-          options = [];
-        }
         aiBridgeService.validateQuestion(
-          {
-            prompt: qRow.prompt,
-            options,
-            correct_index: qRow.correct_index
-          },
+          { prompt: qRow.prompt, options, correct_index: qRow.correct_index },
           'ai_v2',
           submission.reason
-        ).catch(() => {});
+        ).then(res => {
+          if (!res.valid) {
+            const nextStatus = (res as any).verdict === 'ambiguity_confirmed' ? 'under_admin_review' : 'rejected';
+            try { this.db.prepare("UPDATE questions SET status = ? WHERE id = ?").run(nextStatus, submission.question_id); } catch {}
+          }
+        }).catch(() => {});
       }
-    } else if (metrics.trust_score >= 0.7) {
-      // If user has high trust score (>= 0.7), move question to under_review_v1
-      this.db.prepare(`
-        UPDATE questions SET status = 'under_review_v1' WHERE id = ?
-      `).run(submission.question_id);
+    } else {
+      this.db.prepare("UPDATE questions SET status = 'under_review_v1' WHERE id = ?").run(submission.question_id);
+      if (qRow) {
+        aiBridgeService.validateQuestion(
+          { prompt: qRow.prompt, options, correct_index: qRow.correct_index },
+          'ai_v1',
+          submission.reason
+        ).then(res => {
+          if (!res.valid) {
+            try { this.db.prepare("UPDATE questions SET status = 'rejected' WHERE id = ?").run(submission.question_id); } catch {}
+          }
+        }).catch(() => {});
+      }
     }
 
     const updatedMetrics = this.getUserTrustMetrics(userId);
@@ -152,6 +157,79 @@ export class QuestionBankService {
       trust_score: user ? user.trust_score : 1.0,
       feedback_count_today: countRow ? countRow.count : 0
     };
+  }
+
+  public autoUnlockStaleAdminQuestions(): number {
+    const res = this.db.prepare(`
+      UPDATE questions 
+      SET status = 'active'
+      WHERE status IN ('under_admin_review', 'under_review_v1', 'under_review_v2')
+        AND datetime(created_at) <= datetime('now', '-7 days')
+    `).run();
+    return res.changes;
+  }
+
+  public getPendingAdminQuestions(): any[] {
+    const rows = this.db.prepare(`
+      SELECT q.*, 
+        (SELECT COUNT(*) FROM question_feedback_logs WHERE question_id = q.id) as report_count,
+        (SELECT json_group_array(json_object('id', id, 'user_id', user_id, 'reason', reason, 'details', details, 'created_at', created_at)) 
+         FROM question_feedback_logs WHERE question_id = q.id) as feedbacks
+      FROM questions q
+      WHERE q.status = 'under_admin_review'
+      ORDER BY q.created_at ASC
+    `).all() as any[];
+
+    return rows.map(r => {
+      let feedbacks: any[] = [];
+      try { feedbacks = JSON.parse(r.feedbacks || '[]'); } catch { feedbacks = []; }
+      return {
+        ...this.mapRowToQuestion(r),
+        report_count: r.report_count || 0,
+        feedbacks
+      };
+    });
+  }
+
+  public adminResolveQuestion(questionId: string, decision: 'approve' | 'reject', adminNotes?: string): {
+    success: boolean;
+    decision: string;
+    affectedFeedbacks: number;
+  } {
+    const q = this.getQuestionById(questionId);
+    if (!q) return { success: false, decision, affectedFeedbacks: 0 };
+
+    if (decision === 'approve') {
+      const tags = q.quality_tags || [];
+      if (!tags.includes('admin_verified')) tags.push('admin_verified');
+      this.db.prepare(`
+        UPDATE questions SET status = 'active', quality_tags = ? WHERE id = ?
+      `).run(JSON.stringify(tags), questionId);
+
+      const logs = this.db.prepare(`
+        SELECT id, user_id FROM question_feedback_logs 
+        WHERE question_id = ? AND review_stage IN ('pending_v1', 'pending_admin')
+      `).all(questionId) as any[];
+
+      for (const log of logs) {
+        this.resolveFeedback(log.id, false);
+      }
+      return { success: true, decision: 'approved', affectedFeedbacks: logs.length };
+    } else {
+      this.db.prepare(`
+        UPDATE questions SET status = 'rejected' WHERE id = ?
+      `).run(questionId);
+
+      const logs = this.db.prepare(`
+        SELECT id, user_id FROM question_feedback_logs 
+        WHERE question_id = ? AND review_stage IN ('pending_v1', 'pending_admin')
+      `).all(questionId) as any[];
+
+      for (const log of logs) {
+        this.resolveFeedback(log.id, true);
+      }
+      return { success: true, decision: 'rejected', affectedFeedbacks: logs.length };
+    }
   }
 
   private mapRowToQuestion(row: any): QuestionDTO {

@@ -12,6 +12,23 @@ export interface QuestionValidationResult {
   fallback: boolean;
 }
 
+export interface GeneratedQuestionResult {
+  target_word_id: string;
+  target_word: string;
+  embedded_word_ids: string[];
+  prompt: string;
+  masked_sentence: string;
+  options: string[];
+  correct_index: number;
+  explanation: string;
+  error_tag: string;
+  band_75_upgrade: string;
+  band_85_upgrade: string;
+  status: string;
+  quality_tags: string[];
+  fallback: boolean;
+}
+
 export class AIBridgeService {
   private baseUrl = 'http://127.0.0.1:8001';
   private timeoutMs = 3000;
@@ -113,6 +130,41 @@ export class AIBridgeService {
       tier: tier === 'ai_v2' ? 'ai_validator_2' : 'local_deterministic_v1',
       fallback: true
     };
+  }
+
+  public async generateQuestion(
+    targetWord: any,
+    learnedWords: any[] = [],
+    distractors: string[] = []
+  ): Promise<GeneratedQuestionResult | null> {
+    try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), this.timeoutMs);
+
+      const resp = await fetch(`${this.baseUrl}/v1/generate-question`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          target_word: targetWord,
+          learned_words: learnedWords,
+          distractors
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(id);
+
+      if (resp.ok) {
+        const data = await resp.json() as any;
+        return {
+          ...data,
+          fallback: false
+        };
+      }
+    } catch {
+      // Graceful fallback to null so caller can invoke local synthesizer
+    }
+    return null;
   }
 
   private calculateLocalHeuristicSimilarity(

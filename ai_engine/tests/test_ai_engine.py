@@ -46,3 +46,17 @@ def test_ai_validator_tier2_dispute():
     dispute_res = ai_validator.validate_dispute_tier2(q, feedback_reason="two_correct_answers")
     assert "verdict" in dispute_res
     assert dispute_res["tier"] == "ai_validator_2"
+
+def test_question_generator():
+    from ai_engine.question_generator import question_generator
+    target_word = {"id": "#001", "word": "proliferate", "pos": "v", "meaning": "tăng nhanh chóng", "example": "Mobile devices proliferate rapidly."}
+    learned_words = [{"id": "#002", "word": "deteriorate", "pos": "v"}]
+    distractors = ["alleviate", "undermine", "reinforce"]
+    res = question_generator.generate_question(target_word, learned_words, distractors)
+    assert res["target_word"] == "proliferate"
+    assert len(res["options"]) == 4
+    assert res["options"][res["correct_index"]] == "proliferate"
+    assert "_______" in res["masked_sentence"]
+    assert res["status"] == "under_review_v1"
+    assert "ai_generated" in res["quality_tags"]
+

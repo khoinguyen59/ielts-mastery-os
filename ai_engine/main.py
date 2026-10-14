@@ -8,6 +8,7 @@ import uvicorn
 
 from ai_engine.semantic_scorer import semantic_scorer
 from ai_engine.ai_validator import ai_validator
+from ai_engine.question_generator import question_generator
 
 app = FastAPI(
     title="IELTS Mastery OS - AI & NLP Engine",
@@ -24,6 +25,11 @@ class QuestionValidationRequest(BaseModel):
     options: List[str]
     correct_index: int
     feedback_reason: Optional[str] = None
+
+class GenerateQuestionRequest(BaseModel):
+    target_word: Dict[str, Any]
+    learned_words: Optional[List[Dict[str, Any]]] = None
+    distractors: Optional[List[str]] = None
 
 @app.get("/health")
 def health_check():
@@ -51,6 +57,16 @@ def validate_question(req: QuestionValidationRequest):
     if req.feedback_reason:
         return ai_validator.validate_dispute_tier2(q_dict, req.feedback_reason)
     return ai_validator.validate_question_tier1(q_dict)
+
+@app.post("/v1/generate-question")
+def generate_question(req: GenerateQuestionRequest):
+    if not req.target_word:
+        raise HTTPException(status_code=400, detail="target_word must be provided")
+    return question_generator.generate_question(
+        target_word=req.target_word,
+        learned_words=req.learned_words,
+        distractors=req.distractors
+    )
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)

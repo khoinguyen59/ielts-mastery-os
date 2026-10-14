@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === $('exam-result-modal') || e.target === $('vocab-detail-modal')) e.target.style.display = 'none';
     });
 
-    // 5. Analytics & PDF Exports
+    // 5. Analytics
     async function loadAnalytics() {
         const data = await apiRequest('/api/analytics');
         if (!data) return;
@@ -175,18 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if ($('tiers-breakdown-container') && data.vocab_tiers) {
             const t = data.vocab_tiers;
             $('tiers-breakdown-container').innerHTML = `<div style="font-size:12px; line-height:1.6;"><div>🟢 5.0–7.0 (Rất vững): <b>${t.tier_mastered}</b> từ</div><div>🟡 3.0–4.9 (Củng cố): <b>${t.tier_solid}</b> từ</div><div>🔴 1.0–2.9 (Cần ôn): <b>${t.tier_learning}</b> từ</div></div>`;
-        }
-        if ($('pdf-downloads-grid')) {
-            const pdfs = [
-                { t: 'Master 5-Passage Complete Collection', f: 'cam21_reading_mastery_5_tests_complete.pdf' },
-                { t: 'Cam 21 Test 1 P1 (Davies Sisters)', f: 'cam21_test1_reading_passage1.pdf' },
-                { t: 'Cam 21 Test 1 P2 (Silence)', f: 'cam21_test1_reading_passage2.pdf' },
-                { t: 'Cam 21 Test 1 P3 (Sugar)', f: 'cam21_test1_reading_passage3.pdf' },
-                { t: 'Cam 21 Test 2 P1 (Animals Dream)', f: 'cam21_test2_reading_passage1.pdf' },
-                { t: 'Cam 21 Test 2 P2 (Mapungubwe)', f: 'cam21_test2_reading_passage2.pdf' },
-                { t: 'Cam 21 Test 2 P3 (AI Ethics)', f: 'cam21_test2_reading_passage3.pdf' }
-            ];
-            $('pdf-downloads-grid').innerHTML = pdfs.map(p => `<a href="/${p.f}" target="_blank" style="display:block; padding:10px 14px; background:var(--bg-card); border-radius:10px; color:#38bdf8; text-decoration:none; margin-bottom:8px; font-weight:700; font-size:12.5px;">📄 ${p.t} ↗</a>`).join('');
         }
     }
 

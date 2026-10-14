@@ -144,6 +144,54 @@ export class AuthService {
     const statsRow = this.db.prepare('SELECT * FROM user_stats WHERE user_id = ?').get(userId) as any;
     return this.mapUser(userRow, statsRow);
   }
+
+  async mergeGuestData(userId: string, data: {
+    scores?: Record<string, { score: number } | number>;
+    streak?: { current?: number; best?: number; totalPracticed?: number };
+    coins?: number;
+    hearts?: number;
+    xp?: number;
+  }): Promise<{ success: boolean; mergedCount: number }> {
+    if (!userId) throw new Error('userId is required');
+    let mergedCount = 0;
+
+    if (data.scores && typeof data.scores === 'object') {
+      const stmt = this.db.prepare(`
+        INSERT INTO user_vocab_progress (user_id, word_id, current_score, updated_at)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(user_id, word_id) DO UPDATE SET
+          current_score = MAX(user_vocab_progress.current_score, excluded.current_score),
+          updated_at = CURRENT_TIMESTAMP
+      `);
+
+      for (const [wordId, val] of Object.entries(data.scores)) {
+        const score = typeof val === 'number' ? val : (val && typeof val === 'object' ? (val as any).score : 1.0);
+        if (wordId && typeof score === 'number' && !isNaN(score)) {
+          try {
+            stmt.run(userId, wordId, score);
+            mergedCount++;
+          } catch {}
+        }
+      }
+    }
+
+    const existingStats = this.db.prepare('SELECT * FROM user_stats WHERE user_id = ?').get(userId) as any;
+    const currentCoins = existingStats?.coins ?? 100;
+    const currentStreak = existingStats?.streak_days ?? 1;
+    const currentXp = existingStats?.xp ?? 0;
+
+    const newCoins = Math.max(currentCoins, data.coins ?? 0);
+    const newStreak = Math.max(currentStreak, data.streak?.current ?? 0);
+    const newXp = Math.max(currentXp, data.xp ?? 0);
+
+    this.db.prepare(`
+      UPDATE user_stats 
+      SET coins = ?, streak_days = ?, xp = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = ?
+    `).run(newCoins, newStreak, newXp, userId);
+
+    return { success: true, mergedCount };
+  }
 }
 
 export const authService = new AuthService();

@@ -104,7 +104,9 @@ export class SynthesisService {
 
     if (!candidates || candidates.length === 0) return null;
 
-    // In-memory set intersection check (< 0.1ms)
+    let bestMatch: any = null;
+    let bestMatchScore = -1;
+
     for (const c of candidates) {
       let embedded: string[] = [];
       try {
@@ -113,19 +115,40 @@ export class SynthesisService {
         embedded = [];
       }
 
-      // If at least 1 embedded word is in learned pool, or learned pool is empty (cold start)
-      const hasLearnedOverlap = embedded.length === 0 || embedded.some(id => learnedIds.has(id)) || learnedIds.size === 0;
-      if (hasLearnedOverlap) {
-        return this.mapRowToQuestion(c);
+      if (embedded.length === 0) {
+        if (bestMatchScore < 0) {
+          bestMatch = c;
+          bestMatchScore = 0;
+        }
+        continue;
       }
+
+      const knownCount = embedded.filter(id => learnedIds.has(id)).length;
+      const coverage = knownCount / embedded.length;
+      if (coverage >= 0.5 && coverage > bestMatchScore) {
+        bestMatch = c;
+        bestMatchScore = coverage;
+      }
+    }
+
+    if (bestMatch) {
+      return this.mapRowToQuestion(bestMatch);
+    }
+
+    if (learnedIds.size > 0) {
+      return null;
     }
 
     return this.mapRowToQuestion(candidates[0]);
   }
 
   public synthesizeClozeQuestion(target: any, learnedIds: Set<string>, allWords: any[]): QuestionDTO {
-    const learnedWords = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
-    const chosenLearned = learnedWords.slice(0, 2);
+    const learnedCandidates = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
+    for (let i = learnedCandidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [learnedCandidates[i], learnedCandidates[j]] = [learnedCandidates[j], learnedCandidates[i]];
+    }
+    const chosenLearned = learnedCandidates.slice(0, 2);
 
     const baseExample = target.example || `Scholars have observed that measures to apply ${target.word} remain vital.`;
     const regex = new RegExp(`\\b${target.word}\\b`, 'gi');
@@ -136,7 +159,13 @@ export class SynthesisService {
     }
 
     if (chosenLearned.length > 0) {
-      const contextPrefix = `In an effort to promote ${chosenLearned[0].word}, `;
+      const prefixes = [
+        `Given recent findings concerning ${chosenLearned[0].word}, `,
+        `In relation to structural changes in ${chosenLearned[0].word}, `,
+        `While addressing the broader impact of ${chosenLearned[0].word}, `,
+        `Building on established theories of ${chosenLearned[0].word}, `
+      ];
+      const contextPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
       masked = `${contextPrefix}${masked.charAt(0).toLowerCase() + masked.slice(1)}`;
     }
 
@@ -190,34 +219,12 @@ export class SynthesisService {
       band_75_upgrade: `Furthermore, policymakers should actively ${target.word} key protocols to safeguard outcomes.`,
       band_85_upgrade: `Consequently, it is imperative to rigorously ${target.word} structural systemic frameworks.`,
       status: initialStatus,
-      quality_tags: ['deterministic_cloze', 'offline_fallback']
+      quality_tags: isStructureValid ? ['deterministic_cloze', 'v1_approved'] : ['under_review_v1']
     };
 
-    // Persist synthesized question to SQLite if not corrupted
-    try {
-      this.db.prepare(`
-        INSERT OR REPLACE INTO questions (id, target_word_id, embedded_word_ids, prompt, masked_sentence, options, correct_index, explanation, error_tag, band_75_upgrade, band_85_upgrade, status, quality_tags)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(
-        newQ.id,
-        newQ.target_word_id,
-        JSON.stringify(newQ.embedded_word_ids),
-        newQ.prompt,
-        newQ.masked_sentence,
-        JSON.stringify(newQ.options),
-        newQ.correct_index,
-        newQ.explanation,
-        newQ.error_tag,
-        newQ.band_75_upgrade,
-        newQ.band_85_upgrade,
-        newQ.status,
-        JSON.stringify(newQ.quality_tags)
-      );
-    } catch {
-      // Non-blocking in read-only environments
-    }
+    this.persistQuestion(newQ);
 
-    // Pre-validation call to AI Bridge (async, non-blocking to keep getSynthesisRound < 100ms)
+    // Pre-validation call to AI Bridge (async verification)
     aiBridgeService.validateQuestion(
       {
         prompt: newQ.prompt,
@@ -234,6 +241,68 @@ export class SynthesisService {
     }).catch(() => {});
 
     return newQ;
+  }
+
+  public async generateAIQuestionWithRetry(target: any, learnedIds: Set<string>, allWords: any[]): Promise<QuestionDTO | null> {
+    const candidateLearned = allWords.filter(w => learnedIds.has(w.id) && w.id !== target.id);
+    const candidateDistractors = allWords.filter(w => w.id !== target.id && (w.pos === target.pos || !w.pos)).map(w => w.word);
+
+    let attempts = 0;
+    while (attempts < 3) {
+      attempts++;
+      const aiGen = await aiBridgeService.generateQuestion(target, candidateLearned, candidateDistractors);
+      if (!aiGen) continue;
+
+      const val = await aiBridgeService.validateQuestion(
+        { prompt: aiGen.prompt, options: aiGen.options, correct_index: aiGen.correct_index },
+        'ai_v1'
+      );
+
+      if (val.valid) {
+        const q: QuestionDTO = {
+          id: `ai_${target.id}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          target_word_id: target.id,
+          target_word: target.word,
+          embedded_word_ids: aiGen.embedded_word_ids || [],
+          prompt: aiGen.prompt,
+          masked_sentence: aiGen.masked_sentence,
+          options: aiGen.options,
+          correct_index: aiGen.correct_index,
+          explanation: aiGen.explanation,
+          error_tag: aiGen.error_tag,
+          band_75_upgrade: aiGen.band_75_upgrade,
+          band_85_upgrade: aiGen.band_85_upgrade,
+          status: 'active',
+          quality_tags: ['ai_generated', 'v1_approved']
+        };
+        this.persistQuestion(q);
+        return q;
+      }
+    }
+    return null;
+  }
+
+  public persistQuestion(q: QuestionDTO): void {
+    try {
+      this.db.prepare(`
+        INSERT OR REPLACE INTO questions (id, target_word_id, embedded_word_ids, prompt, masked_sentence, options, correct_index, explanation, error_tag, band_75_upgrade, band_85_upgrade, status, quality_tags)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        q.id,
+        q.target_word_id,
+        JSON.stringify(q.embedded_word_ids),
+        q.prompt,
+        q.masked_sentence,
+        JSON.stringify(q.options),
+        q.correct_index,
+        q.explanation,
+        q.error_tag,
+        q.band_75_upgrade,
+        q.band_85_upgrade,
+        q.status,
+        JSON.stringify(q.quality_tags)
+      );
+    } catch {}
   }
 
   private mapRowToQuestion(row: any): QuestionDTO {

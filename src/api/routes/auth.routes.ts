@@ -90,6 +90,26 @@ export const authRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
       return reply.status(500).send({ success: false, error: err.message || 'Auth check failed' });
     }
   });
+
+  fastify.post('/api/auth/sync-guest', async (request, reply) => {
+    try {
+      const body = request.body as any;
+      const userId = body?.userId || body?.user_id;
+      if (!userId) {
+        return reply.status(400).send({ success: false, error: 'userId is required' });
+      }
+      const result = await authService.mergeGuestData(userId, {
+        scores: body.scores,
+        streak: body.streak,
+        coins: body.coins,
+        hearts: body.hearts,
+        xp: body.xp
+      });
+      return reply.status(200).send(result);
+    } catch (err: any) {
+      return reply.status(500).send({ success: false, error: err.message || 'Failed to sync guest data' });
+    }
+  });
 };
 
 export default authRoutes;

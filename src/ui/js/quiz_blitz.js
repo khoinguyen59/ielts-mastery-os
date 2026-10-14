@@ -310,16 +310,9 @@ class QuizBlitz {
         const submitBtn = document.getElementById("quiz-report-submit-btn");
 
         if (reasonSelect) reasonSelect.value = "grammar_typo";
-        if (msg) {
-            msg.style.display = "none";
-            msg.textContent = "";
-            msg.className = "report-status-msg";
-        }
+        if (msg) { msg.style.display = "none"; msg.textContent = ""; msg.className = "report-status-msg"; }
         if (detailsInput) detailsInput.value = "";
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Gửi Báo Lỗi";
-        }
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Gửi Báo Lỗi"; }
         if (modal) modal.style.display = "flex";
     }
 
@@ -341,51 +334,25 @@ class QuizBlitz {
         const details = detailsInput?.value?.trim() || '';
         const uid = this.userId || localStorage.getItem('ielts_os_user_id') || 'default_user';
 
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Đang gửi...";
-        }
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Đang gửi..."; }
 
         try {
             const resp = await fetch('/api/feedback/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    question_id: qId,
-                    user_id: uid,
-                    reason: reason,
-                    details: details
-                })
+                body: JSON.stringify({ question_id: qId, user_id: uid, reason, details })
             });
             const data = await resp.json();
             if (resp.ok && data.success) {
-                if (msg) {
-                    msg.className = "report-status-msg report-status-success";
-                    msg.textContent = "✓ " + (data.message || "Báo lỗi đã được tiếp nhận thành công!");
-                    msg.style.display = "block";
-                }
+                if (msg) { msg.className = "report-status-msg report-status-success"; msg.textContent = "✓ " + (data.message || "Báo lỗi đã được tiếp nhận thành công!"); msg.style.display = "block"; }
                 setTimeout(() => { this.closeReportModal(); }, 1600);
             } else {
-                if (msg) {
-                    msg.className = "report-status-msg report-status-error";
-                    msg.textContent = "✕ " + (data.message || "Lỗi gửi báo cáo. Vui lòng thử lại!");
-                    msg.style.display = "block";
-                }
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Gửi Báo Lỗi";
-                }
+                if (msg) { msg.className = "report-status-msg report-status-error"; msg.textContent = "✕ " + (data.message || "Lỗi gửi báo cáo. Vui lòng thử lại!"); msg.style.display = "block"; }
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Gửi Báo Lỗi"; }
             }
         } catch (err) {
-            if (msg) {
-                msg.className = "report-status-msg report-status-error";
-                msg.textContent = "✕ Không thể kết nối máy chủ!";
-                msg.style.display = "block";
-            }
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Gửi Báo Lỗi";
-            }
+            if (msg) { msg.className = "report-status-msg report-status-error"; msg.textContent = "✕ Không thể kết nối máy chủ!"; msg.style.display = "block"; }
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Gửi Báo Lỗi"; }
         }
     }
 }

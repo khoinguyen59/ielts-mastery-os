@@ -136,6 +136,31 @@ class AuthManager {
         window.soundManager?.playSuccess();
         window.progressionManager?.init(data.user);
         window.energyManager?.init(data.user);
+
+        // Sync local guest progress if user logged in or registered
+        if (!data.is_guest && window.localStore) {
+            try {
+                const localScores = window.localStore.getScores();
+                const localStreak = window.localStore.getStreak();
+                const localCoins = parseInt(localStorage.getItem('ielts_os_coins') || '100');
+                if (Object.keys(localScores).length > 0 || localStreak.current > 1 || localCoins > 100) {
+                    fetch('/api/auth/sync-guest', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${data.token}`
+                        },
+                        body: JSON.stringify({
+                            userId: data.user.id,
+                            scores: localScores,
+                            streak: localStreak,
+                            coins: localCoins
+                        })
+                    }).catch(() => {});
+                }
+            } catch (e) {}
+        }
+
         // Always open the placement gate if user has not completed onboarding
         if (window.placementManager) {
             window.placementManager.openOnboardingModal();

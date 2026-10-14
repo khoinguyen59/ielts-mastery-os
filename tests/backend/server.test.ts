@@ -76,7 +76,7 @@ describe('Fastify REST API Gateway (Port 3000 / Endpoints)', () => {
     const body = JSON.parse(res.body);
     expect(body.questions).toHaveLength(3);
     expect(body.questions[0].word_id).toBeDefined();
-    expect(body.questions[0].badge).toBe('Anh -> Việt');
+    expect(body.questions[0].badge).toBe('Điền từ học thuật');
   });
 
   it('POST /api/quiz/submit grades correct and wrong answers accurately', async () => {

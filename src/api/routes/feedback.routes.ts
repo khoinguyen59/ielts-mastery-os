@@ -46,4 +46,27 @@ export async function feedbackRoutes(app: FastifyInstance) {
     const metrics = questionBankService.getUserTrustMetrics(userId);
     return { success: true, data: metrics };
   });
+
+  // Admin: Get questions pending admin review
+  app.get('/api/admin/questions/pending', async () => {
+    const questions = questionBankService.getPendingAdminQuestions();
+    return { success: true, count: questions.length, data: questions };
+  });
+
+  // Admin: Decide question outcome (approve or reject)
+  app.post('/api/admin/questions/:id/decide', async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const body = request.body as { decision: 'approve' | 'reject'; notes?: string };
+    if (!body || !['approve', 'reject'].includes(body.decision)) {
+      return reply.status(400).send({ success: false, error: 'decision must be approve or reject' });
+    }
+    const res = questionBankService.adminResolveQuestion(id, body.decision, body.notes);
+    return { success: res.success, data: res };
+  });
+
+  // Admin: Trigger 7-day auto-unlock for stale questions
+  app.post('/api/admin/questions/auto-unlock', async () => {
+    const unlocked = questionBankService.autoUnlockStaleAdminQuestions();
+    return { success: true, unlocked_count: unlocked };
+  });
 }

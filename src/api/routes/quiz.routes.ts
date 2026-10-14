@@ -38,7 +38,7 @@ export async function quizRoutes(app: FastifyInstance) {
         id: q.id,
         target_word: q.target_word || '',
         word_id: q.target_word_id,
-        badge: 'Anh -> Việt',
+        badge: 'Điền từ học thuật',
         prompt: q.masked_sentence || q.prompt,
         options: q.options,
         correct_index: q.correct_index,
