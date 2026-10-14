@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ielts_app
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - DB_PATH=/app/data/ielts_mastery.db
+      - AI_ENGINE_URL=http://ai_engine:8001
+      - JWT_SECRET=ielts_mastery_os_docker_compose_secret_jwt
+    volumes:
+      - ielts_data:/app/data
+    depends_on:
+      - ai_engine
+    restart: unless-stopped
+
+  ai_engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.ai
+    container_name: ielts_ai_engine
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - HOST=0.0.0.0
+    restart: unless-stopped
+
+volumes:
+  ielts_data:

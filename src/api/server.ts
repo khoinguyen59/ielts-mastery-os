@@ -14,6 +14,7 @@ import { examRoutes } from './routes/exam.routes.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { userRoutes } from './routes/user.routes.js';
 import { courseRoutes } from './routes/course.routes.js';
+import { writingRoutes } from './routes/writing.routes.js';
 import { getDatabase } from '../db/sqlite.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -106,6 +107,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(placementRoutes);
   await app.register(feedbackRoutes);
   await app.register(examRoutes);
+  await app.register(writingRoutes, { prefix: '/api/writing' });
 
   return app;
 }

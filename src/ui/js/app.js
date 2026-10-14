@@ -1,18 +1,13 @@
 /**
- * IELTS Mastery OS — Duolingo & Luyện Từ Gamified Orchestrator.
- * Modular Decoupled Architecture (< 400 lines).
+ * IELTS Mastery OS — Master Application Orchestrator
+ * Fully Decoupled Architecture (< 180 lines).
  */
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
         currentView: 'roadmap',
-        currentPassageId: 't1_p1',
-        currentChunkId: 'chunk_01',
         vocabList: [],
         coins: parseInt(localStorage.getItem('ielts_os_coins') || '120'),
-        hearts: parseInt(localStorage.getItem('ielts_os_hearts') || '5'),
-        timerInterval: null,
-        timerSeconds: 20 * 60,
-        isTimerRunning: false
+        hearts: parseInt(localStorage.getItem('ielts_os_hearts') || '5')
     };
 
     const $ = id => document.getElementById(id);
@@ -47,14 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (viewName === 'quiz' && window.quizBlitz) {
             window.quizBlitz.startRound(10);
         } else if (viewName === 'roadmap') {
-            updateRoadmapStats();
+            updateTopbarStats();
         }
     }
 
     $$('.nav-tab').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
     $$('[data-action="back-to-roadmap"]').forEach(b => b.addEventListener('click', () => switchView('roadmap')));
 
-    // 2. Roadmap Node Actions (Event Delegation for Dynamic Nodes)
+    // 2. Roadmap Node Actions
     const nodeActions = { 'open-flashcard': 'flashcard', 'open-quiz': 'quiz', 'open-writing': 'writing', 'open-exam': 'exam' };
     const nodeIdxMap = { 'open-flashcard': 1, 'open-quiz': 2, 'claim-chest': 3, 'open-writing': 4, 'open-exam': 5 };
 
@@ -111,151 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateRoadmapStats() { updateTopbarStats(); }
-
-    // 4. Flashcard Studio Wiring
-    function initFlashcardEvents() {
-        $$('.btn-rate').forEach(btn => btn.addEventListener('click', () => {
-            window.flashcardStudio.rateCurrentWord(parseFloat(btn.dataset.score));
-            window.progressionManager?.completeNode(1);
-        }));
-        $('fc-prev-btn')?.addEventListener('click', () => window.flashcardStudio.prevCard());
-        $('fc-next-btn')?.addEventListener('click', () => window.flashcardStudio.nextCard());
-        $('fc-flip-btn')?.addEventListener('click', () => window.flashcardStudio.flipCard());
-    }
-
-    // 5. Reading Exam Simulator
-    async function loadPassage(passageId) {
-        state.currentPassageId = passageId;
-        $$('.pass-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.pid === passageId));
-        const passage = await apiRequest(`/api/exams/${passageId}`);
-        if (!passage) return;
-
-        $('passage-display-title').textContent = passage.title || 'Cambridge IELTS 21';
-        $('passage-display-subtitle').textContent = passage.subtitle || '';
-        $('passage-text-container').innerHTML = (passage.paragraphs || []).map(p => 
-            `<p class="passage-paragraph"><b>${p.label}</b> ${p.text}</p>`
-        ).join('');
-
-        const questions = passage.questions || [];
-        $('questions-list-container').innerHTML = questions.map(q => `
-            <div class="question-item" style="margin-bottom:12px; padding:10px; background:rgba(0,0,0,0.2); border-radius:10px;">
-                <div style="font-size:12px; color:#38bdf8; font-weight:800;">Q${q.number} • ${q.q_type}</div>
-                <div style="font-size:13px; margin-top:4px;">${q.prompt}</div>
-            </div>`
-        ).join('');
-
-        $('sheet-inputs-grid').innerHTML = questions.map(q => `
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                <span style="font-size:12px; font-weight:800; width:35px;">Q${q.number}:</span>
-                <input type="text" class="cell-field duo-search-input" data-qnum="${q.number}" placeholder="Đáp án...">
-            </div>`
-        ).join('');
-    }
-
-    $$('.pass-tab').forEach(tab => tab.addEventListener('click', () => loadPassage(tab.dataset.pid)));
-
-    $('exam-timer-toggle-btn')?.addEventListener('click', function() {
-        if (state.isTimerRunning) {
-            clearInterval(state.timerInterval);
-            state.isTimerRunning = false;
-            this.textContent = 'Start';
-        } else {
-            state.isTimerRunning = true;
-            this.textContent = 'Pause';
-            state.timerInterval = setInterval(() => {
-                if (state.timerSeconds > 0) {
-                    state.timerSeconds--;
-                    const m = Math.floor(state.timerSeconds / 60).toString().padStart(2, '0');
-                    const s = (state.timerSeconds % 60).toString().padStart(2, '0');
-                    $('exam-timer-display').textContent = `${m}:${s}`;
-                } else {
-                    clearInterval(state.timerInterval);
-                    alert('Hết giờ làm bài!');
-                }
-            }, 1000);
-        }
-    });
-
-    $('submit-exam-btn')?.addEventListener('click', async () => {
-        const studentAnswers = {};
-        $$('.cell-field').forEach(inp => { studentAnswers[inp.dataset.qnum] = inp.value.trim(); });
-        const res = await apiRequest('/api/exams/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ passage_id: state.currentPassageId, answers: studentAnswers })
-        });
-        if (!res) return;
-        $('modal-result-body').innerHTML = `
-            <div style="background: rgba(88,204,2,0.18); padding:14px; border-radius:14px; margin-bottom:14px; border:2px solid var(--duo-green);">
-                <h4 style="color:#4ade80; font-size:16px; font-weight:900;">Đúng ${res.correct_answers}/${res.total_questions} (${res.percentage}%) — Ước tính Band ${res.estimated_band}</h4>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                ${(res.details || []).map(d => `
-                    <div style="background:rgba(0,0,0,0.3); border:1px solid ${d.is_correct ? '#58cc02':'#ff4b4b'}; padding:10px; border-radius:10px; font-size:12px;">
-                        <b>Q${d.number}:</b> Đáp án: <b style="color:#38bdf8;">${d.correct_answer}</b> | Bạn điền: <i>${d.user_answer || '(Trống)'}</i>
-                        <div style="margin-top:4px; color:#cbd5e1;">${d.explanation}</div>
-                    </div>`).join('')}
-            </div>`;
-        $('exam-result-modal').style.display = 'flex';
-        if (res.percentage >= 70) window.soundManager?.playReward();
-        else window.soundManager?.playCorrect();
-        window.progressionManager?.completeNode(5);
-    });
-
-    $('clear-exam-btn')?.addEventListener('click', () => { $$('.cell-field').forEach(inp => { inp.value = ''; }); });
-
-    // 6. Reading-to-Writing Studio
-    async function loadWritingChunk(chunkId) {
-        state.currentChunkId = chunkId;
-        $$('.pill-btn').forEach(tab => tab.classList.toggle('active', tab.dataset.chunk === chunkId));
-        const chunk = await apiRequest(`/api/writing-chunks/${chunkId}`);
-        if (!chunk) return;
-
-        $('chunk-badge').textContent = `Micro-Chunk: ${chunk.id}`;
-        $('chunk-title').textContent = chunk.title || 'Writing Task 2';
-        $('chunk-vietnamese-text').textContent = chunk.vietnamese_prompt || '';
-        $('target-chips-container').innerHTML = (chunk.target_words || []).map(tw => 
-            `<span style="display:inline-block; margin:3px; padding:4px 10px; background:rgba(28,176,246,0.18); border-radius:999px; font-size:12px; font-weight:700; color:#38bdf8;">[${tw.id}] ${tw.word} (${tw.pos}) • ${tw.core}</span>`
-        ).join('');
-        $('chunk-clues-pills').innerHTML = (chunk.minimalist_clues || []).map(c => `<span style="display:inline-block; margin:2px; padding:2px 8px; background:rgba(255,255,255,0.08); border-radius:6px; font-size:11px;">${c}</span>`).join('');
-        $('student-writing-input').value = '';
-        $('writing-word-counter').textContent = '0 words';
-        $('writing-feedback-container').style.display = 'none';
-    }
-
-    $$('.pill-btn').forEach(tab => tab.addEventListener('click', () => loadWritingChunk(tab.dataset.chunk)));
-
-    $('student-writing-input')?.addEventListener('input', function() {
-        const count = this.value.trim() ? this.value.trim().split(/\s+/).length : 0;
-        $('writing-word-counter').textContent = `${count} words`;
-    });
-
-    $('evaluate-writing-btn')?.addEventListener('click', async () => {
-        const text = $('student-writing-input').value.trim();
-        if (!text) { alert('Vui lòng viết câu dịch trước khi chấm!'); return; }
-        const res = await apiRequest('/api/writing/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chunk_id: state.currentChunkId, user_text: text })
-        });
-        if (!res) return;
-        $('feedback-msg').textContent = `${res.feedback} • Khớp: ${(res.matched_words || []).join(', ') || 'Chưa đủ'}`;
-        $('text-model-75').textContent = `"${res.band_75_model}"`;
-        $('text-model-85').textContent = `"${res.band_85_model}"`;
-        $('writing-feedback-container').style.display = 'block';
-
-        if (res.score_ratio >= 0.7) {
-            window.soundManager?.playCorrect();
-            window.mascotManager?.reactCorrect(1);
-        } else {
-            window.soundManager?.playReward();
-            window.mascotManager?.reactStudy();
-        }
-        window.progressionManager?.completeNode(4);
-    });
-
-    // 7. Master 450 Lexicon
+    // 4. Master 450 Lexicon
     async function loadVocabList() {
         const res = await apiRequest('/api/vocab');
         if (!res || !res.data) return;
@@ -264,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderVocabCards(words) {
+        if (!$('vocab-count-indicator') || !$('vocab-cards-grid')) return;
         $('vocab-count-indicator').textContent = `${words.length} Words`;
         $('vocab-cards-grid').innerHTML = words.slice(0, 90).map(w => {
             const sc = window.localStore?.getWordScore(w.id, w.score) || w.score;
@@ -280,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function filterVocab() {
-        const q = $('vocab-search-input').value.toLowerCase().trim();
-        const pos = $('vocab-pos-select').value.toLowerCase().trim();
+        const q = ($('vocab-search-input')?.value || '').toLowerCase().trim();
+        const pos = ($('vocab-pos-select')?.value || '').toLowerCase().trim();
         const filtered = state.vocabList.filter(w => {
             const matchQ = !q || w.word.toLowerCase().includes(q) || (w.meaning && w.meaning.toLowerCase().includes(q)) || w.id.includes(q);
             const matchPos = !pos || (w.pos && w.pos.toLowerCase().includes(pos));
@@ -294,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('vocab-pos-select')?.addEventListener('change', filterVocab);
 
     function showVocabDetail(w) {
+        if (!$('vocab-modal-title') || !$('vocab-modal-body')) return;
         $('vocab-modal-title').textContent = `[${w.id}] ${w.word.toUpperCase()} (${w.pos})`;
         const sc = window.localStore?.getWordScore(w.id, w.score) || w.score;
         $('vocab-modal-body').innerHTML = `
@@ -302,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="margin-bottom:6px;"><b>Collocations:</b> ${w.collocations || 'N/A'}</div>
             <div style="margin-bottom:6px;"><b>Gốc Lego:</b> ${w.lego_roots || 'N/A'}</div>
             <div><b>Ví dụ Cam 21:</b> ${w.example || 'N/A'}</div>`;
-        $('vocab-detail-modal').style.display = 'flex';
+        if ($('vocab-detail-modal')) $('vocab-detail-modal').style.display = 'flex';
     }
 
     $('modal-close-btn')?.addEventListener('click', () => { $('exam-result-modal').style.display = 'none'; });
@@ -311,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === $('exam-result-modal') || e.target === $('vocab-detail-modal')) e.target.style.display = 'none';
     });
 
-    // 8. Analytics & PDFs
+    // 5. Analytics & PDF Exports
     async function loadAnalytics() {
         const data = await apiRequest('/api/analytics');
         if (!data) return;
@@ -324,19 +177,28 @@ document.addEventListener('DOMContentLoaded', () => {
             $('tiers-breakdown-container').innerHTML = `<div style="font-size:12px; line-height:1.6;"><div>🟢 5.0–7.0 (Rất vững): <b>${t.tier_mastered}</b> từ</div><div>🟡 3.0–4.9 (Củng cố): <b>${t.tier_solid}</b> từ</div><div>🔴 1.0–2.9 (Cần ôn): <b>${t.tier_learning}</b> từ</div></div>`;
         }
         if ($('pdf-downloads-grid')) {
-            const pdfs = [{ t: 'Master 5-Passage Complete Collection', f: 'cam21_reading_mastery_5_tests_complete.pdf' }, { t: 'Cam 21 Test 1 P1 (Davies Sisters)', f: 'cam21_test1_reading_passage1.pdf' }, { t: 'Cam 21 Test 1 P2 (Silence)', f: 'cam21_test1_reading_passage2.pdf' }, { t: 'Cam 21 Test 1 P3 (Sugar)', f: 'cam21_test1_reading_passage3.pdf' }, { t: 'Cam 21 Test 2 P1 (Animals Dream)', f: 'cam21_test2_reading_passage1.pdf' }, { t: 'Cam 21 Test 2 P3 (AI Ethics)', f: 'cam21_test2_reading_passage3.pdf' }];
+            const pdfs = [
+                { t: 'Master 5-Passage Complete Collection', f: 'cam21_reading_mastery_5_tests_complete.pdf' },
+                { t: 'Cam 21 Test 1 P1 (Davies Sisters)', f: 'cam21_test1_reading_passage1.pdf' },
+                { t: 'Cam 21 Test 1 P2 (Silence)', f: 'cam21_test1_reading_passage2.pdf' },
+                { t: 'Cam 21 Test 1 P3 (Sugar)', f: 'cam21_test1_reading_passage3.pdf' },
+                { t: 'Cam 21 Test 2 P1 (Animals Dream)', f: 'cam21_test2_reading_passage1.pdf' },
+                { t: 'Cam 21 Test 2 P2 (Mapungubwe)', f: 'cam21_test2_reading_passage2.pdf' },
+                { t: 'Cam 21 Test 2 P3 (AI Ethics)', f: 'cam21_test2_reading_passage3.pdf' }
+            ];
             $('pdf-downloads-grid').innerHTML = pdfs.map(p => `<a href="/${p.f}" target="_blank" style="display:block; padding:10px 14px; background:var(--bg-card); border-radius:10px; color:#38bdf8; text-decoration:none; margin-bottom:8px; font-weight:700; font-size:12.5px;">📄 ${p.t} ↗</a>`).join('');
         }
     }
 
-    // Initialize App
+    // Initialize All Decoupled Subsystems
     initTopbar();
     window.authManager?.init();
+    window.placementManager?.init();
     window.energyManager?.init();
     window.progressionManager?.init();
-    initFlashcardEvents();
+    window.courseManager?.init();
+    window.examRunner?.init();
+    window.writingStudio?.init();
     loadAnalytics();
-    loadPassage('t1_p1');
-    loadWritingChunk('chunk_01');
     loadVocabList();
 });
